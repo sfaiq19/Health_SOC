@@ -1,0 +1,47 @@
+<group name="healthcare,">
+  <rule id="110000" level="0">
+    <decoded_as>json</decoded_as>
+    <field name="service">^hospital-lab$</field>
+    <description>Synthetic hospital application event</description>
+  </rule>
+  <rule id="110001" level="1">
+    <if_sid>110000</if_sid><field name="action">^login_failure$</field>
+    <description>Hospital authentication failure</description><group>hc_auth_failure,</group>
+  </rule>
+  <rule id="110002" level="1">
+    <if_sid>110000</if_sid><field name="action">^record_read$</field><field name="outcome">^success$</field>
+    <description>Hospital record read</description><group>hc_record_read,</group>
+  </rule>
+  <rule id="110102" level="8">
+    <if_sid>110002</if_sid><field name="care_scope">^unassigned$</field>
+    <description>Hospital record accessed outside care assignment</description><group>hc_record_read,</group>
+  </rule>
+  <rule id="110003" level="1">
+    <if_sid>110000</if_sid><field name="action">^document_update$</field><field name="outcome">^success$</field>
+    <description>Hospital document updated</description><group>hc_document_update,</group>
+  </rule>
+  <rule id="110004" level="1">
+    <if_sid>110000</if_sid><field name="action">^export_completed$</field><field name="outcome">^success$</field>
+    <description>Hospital export completed</description><group>hc_export_success,</group>
+  </rule>
+  <rule id="110301" level="8">
+    <if_sid>110004</if_sid><field name="destination_approved">^no$</field>
+    <description>Hospital export to unapproved business destination</description><group>hc_export_success,</group>
+  </rule>
+  <rule id="110302" level="12">
+    <if_sid>110301</if_sid><field name="bytes_sent" type="pcre2">^[1-9][0-9]{6,}$</field>
+    <description>Large hospital export to unapproved business destination</description><group>hc_export_success,</group>
+  </rule>
+  <rule id="110101" level="10" frequency="5" timeframe="60">
+    <if_group>hc_auth_failure</if_group><if_matched_group>hc_auth_failure</if_matched_group><same_field>actor_key</same_field>
+    <description>Repeated hospital authentication failures</description><group>hc_auth_burst,</group>
+  </rule>
+  <rule id="110103" level="10" frequency="20" timeframe="60">
+    <if_group>hc_record_read</if_group><if_matched_group>hc_record_read</if_matched_group><same_field>actor_key</same_field>
+    <description>High volume of hospital record reads</description><group>hc_record_burst,</group>
+  </rule>
+  <rule id="110201" level="12" frequency="20" timeframe="60">
+    <if_group>hc_document_update</if_group><if_matched_group>hc_document_update</if_matched_group><same_field>actor_key</same_field>
+    <description>High volume of hospital document updates</description><group>hc_document_burst,</group>
+  </rule>
+</group>

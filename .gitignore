@@ -1,0 +1,17 @@
+__pycache__/
+*.egg-info/
+.pytest_cache/
+dist/
+build/
+*.py[cod]
+.venv/
+.env
+config/lab.local.json
+.superpowers/
+*.pcapng
+*.pcap
+*.sqlite*
+*.log
+evidence/*
+!evidence/environment/
+evidence/environment/*

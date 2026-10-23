@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "policy_mode": "observe",
+  "hospital_host": "10.77.0.1",
+  "hospital_port": 8080,
+  "soc_host": "10.77.0.10",
+  "runtime_root": "C:\\Users\\YOUR_USERNAME\\HealthcareSOCLab\\hospital",
+  "agent_name": "hospital-win",
+  "vm": {"cpu": 4, "ram_gib": 8, "disk_gib": 60},
+  "destinations": {
+    "approved-lab": {"host": "10.77.0.10", "port": 9081, "approved": true},
+    "unapproved-lab": {"host": "10.77.0.10", "port": 9080, "approved": false}
+  }
+}
