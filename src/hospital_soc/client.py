@@ -48,8 +48,9 @@ class LabClient:
             token = self.token(actor)
         if token:
             headers['Authorization'] = 'Bearer ' + token
+        receipt_actor = body.get('username', '').strip().lower() if path == '/api/auth/login' and isinstance(body, dict) else actor or 'anonymous'
         receipt = {'request_id': request_id, 'method': method, 'path': path,
-                   'actor': actor or 'anonymous', 'started_at': utc_now()}
+                   'actor': receipt_actor, 'started_at': utc_now()}
         try:
             response = self.session.request(method, self.base_url + path, headers=headers,
                                            json=body, timeout=(3, 15), allow_redirects=False)

@@ -6,6 +6,7 @@ import time
 
 from .client import LabClient, run_context
 from .config import LabConfig
+from .evidence_contract import make_intent
 
 
 def planned_operations(duration_s: int, seed: int, pause_documents=False, include_exports=False) -> list[dict]:
@@ -35,6 +36,8 @@ def run_baseline(config: LabConfig, duration_s: int, seed: int, *, base_url='htt
     operations = planned_operations(duration_s, seed, pause_documents, include_exports)
     credentials = json.loads((config.root / 'secrets.json').read_text())
     with run_context(config, 'baseline', run_id, seed, output, diagnostic) as manifest:
+        manifest.metadata['intent'] = make_intent('baseline', seed, config.policy_mode, diagnostic,
+            duration_s=duration_s, pause_documents=pause_documents, include_exports=include_exports)
         client = LabClient(base_url, manifest, credentials)
         try:
             start = time.monotonic()

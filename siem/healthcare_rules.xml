@@ -6,7 +6,7 @@
   </rule>
   <rule id="110001" level="1">
     <if_sid>110000</if_sid><field name="action">^login_failure$</field>
-    <description>Hospital authentication failure</description><group>hc_auth_failure,</group>
+    <description>Hospital authentication failure [hc-rev:02e13c9ec9dd060240416876256012b71fba0e0e4423c96995cac98e38621635]</description><group>hc_auth_failure,</group>
   </rule>
   <rule id="110002" level="1">
     <if_sid>110000</if_sid><field name="action">^record_read$</field><field name="outcome">^success$</field>

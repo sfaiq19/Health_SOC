@@ -21,3 +21,15 @@ def test_cli_corrupt_manifest_writes_invalid_metrics(tmp_path):
                             env=__import__('os').environ | {'PYTHONPATH': 'src'})
     assert result.returncode == 2
     assert json.loads((tmp_path / 'metrics.json').read_text())['status'] == 'invalid'
+
+
+def test_cli_malformed_nested_receipt_writes_invalid_metrics(tmp_path):
+    from evidence_fixtures import evidence_bundle
+    manifest, _ = evidence_bundle(tmp_path)
+    manifest['receipts'][0]['request_id'] = []
+    (tmp_path / 'manifest.json').write_text(json.dumps(manifest))
+    result = subprocess.run([sys.executable, '-m', 'hospital_soc', 'evaluate', '--run-dir', str(tmp_path)],
+                            text=True, capture_output=True,
+                            env=__import__('os').environ | {'PYTHONPATH': 'src'})
+    assert result.returncode == 2
+    assert json.loads((tmp_path / 'metrics.json').read_text())['status'] == 'invalid'

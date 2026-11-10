@@ -7,6 +7,7 @@ import threading
 from uuid import uuid4
 
 from .contracts import AuditEvent
+from .store import reject_links
 
 _locks = {}
 
@@ -32,7 +33,12 @@ class AuditWriter:
         line = json.dumps(value, separators=(',', ':'), allow_nan=False) + '\n'
         if len(line.encode('utf-8')) >= 8192:
             raise ValueError('Audit event exceeds size limit')
-        with self.lock, self.path.open('a', encoding='utf-8', newline='\n') as output:
-            output.write(line)
-            output.flush()
-            os.fsync(output.fileno())
+        with self.lock:
+            reject_links(self.path)
+            with self.path.open('a', encoding='utf-8', newline='\n') as output:
+                reject_links(self.path)
+                if os.fstat(output.fileno()).st_nlink != 1:
+                    raise ValueError('Audit file must not be hard linked')
+                output.write(line)
+                output.flush()
+                os.fsync(output.fileno())

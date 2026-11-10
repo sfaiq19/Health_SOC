@@ -5,11 +5,14 @@ from hashlib import sha256
 import csv
 import json
 import ntpath
+import re
 from pathlib import Path
 import subprocess
 from uuid import UUID
 
 from .packets import validate_pcapng, verified_packet_rows
+from .evidence_contract import canonical_uuid, validate_receipts, reconcile_operations
+from .native_validation import cases as native_cases
 
 EXPECTED = {'s1': {'110101', '110102', '110103'}, 's2': {'110201'}, 's3': {'110302'}, 'baseline': set()}
 ACTIONABLE = {'110101', '110102', '110103', '110201', '110301', '110302'}
@@ -40,8 +43,10 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
         start, end = instant(manifest['started_at']), instant(manifest['ended_at'])
         if (end < start or not isinstance(manifest['receipts'], list)
                 or any(not isinstance(item, dict) for item in manifest['receipts'])
-                or not isinstance(manifest.get('notes', []), list)):
+                or not isinstance(manifest.get('notes', []), list)
+                or not isinstance(manifest.get('metadata', {}), dict)):
             raise ValueError('Invalid run interval or receipts')
+        validate_receipts(manifest['receipts'])
     except (ValueError, KeyError, TypeError, AttributeError) as error:
         result.update(status='invalid')
         issues.append(f'Invalid manifest: {error}')
@@ -81,6 +86,9 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
                         for key in ['run_id', 'event_id', 'request_id', 'event_time']:
                             if key in data and not isinstance(data[key], str):
                                 raise ValueError(f'{key} must be a string')
+                        if data.get('service') == 'hospital-lab':
+                            if not canonical_uuid(data.get('event_id')) or not canonical_uuid(data.get('request_id')):
+                                raise ValueError('Hospital event identity missing or invalid')
             return value
         except (ValueError, OSError) as error:
             issues.append(f'Invalid {name}: {error}')
@@ -101,6 +109,17 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
     if not source:
         issues.append('No source events for this run')
     else:
+        for event in source:
+            try:
+                if not start - timedelta(seconds=1) <= instant(event['event_time']) <= end + timedelta(seconds=1):
+                    issues.append('Source event lies outside the run interval')
+            except (ValueError, KeyError):
+                issues.append('Source event timestamp is missing or invalid')
+        try:
+            issues.extend(reconcile_operations(manifest, source, start, end))
+        except (ValueError, KeyError, TypeError, AttributeError):
+            result['status'] = 'invalid'
+            issues.append('Malformed operation evidence prevents reconciliation')
         source_ids = {event.get('event_id') for event in source}
         archive_ids = [event.get('event_id') for event in archives]
         if None in source_ids or len(source_ids) != len(source):
@@ -116,6 +135,8 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
             original = source_by_id.get(data.get('event_id'))
             if original is None or data.get('run_id') != run_id:
                 continue
+            if event.get('agent', {}).get('name') != 'hospital-win':
+                issues.append('Archived source event endpoint is missing or inconsistent')
             try:
                 source_at, arrived = instant(original['event_time']), instant(event['timestamp'])
                 if not -1 <= (arrived - source_at).total_seconds() <= 120 or arrived > end + timedelta(seconds=120):
@@ -180,6 +201,35 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
         issues.append('Native Wazuh rule validation is missing or failed')
     elif not rule_path.is_file() or proof.get('rules_sha256') != sha256(rule_path.read_bytes()).hexdigest():
         issues.append('Native validation does not match the collected rules file')
+    else:
+        cases = proof.get('cases')
+        expectations = {'loaded-revision': ['110001'], **{name: expected for name, _, expected in native_cases()}}
+        case_names = set(expectations)
+        valid_cases = (isinstance(cases, list) and len(cases) == len(case_names)
+                       and all(isinstance(item, dict) and isinstance(item.get('case'), str) for item in cases))
+        if valid_cases:
+            valid_cases = ({item['case'] for item in cases} == case_names and all(
+                item.get('passed') is True and item.get('expected_rules') == expectations[item['case']]
+                and item.get('observed_rules') == expectations[item['case']] for item in cases))
+        if proof.get('validation_schema') != 2 or not valid_cases:
+            issues.append('Native proof lacks complete per-event case results')
+        revision = proof.get('loaded_revision')
+        rules_text = rule_path.read_text(encoding='utf-8').replace('\r\n', '\n')
+        markers = re.findall(r'\[hc-rev:([0-9a-f]{64})\]', rules_text)
+        normalized = re.sub(r'\[hc-rev:[0-9a-f]{64}\]', '[hc-rev:' + '0' * 64 + ']', rules_text)
+        if not markers or len(markers) != 1 or revision != markers[0] or sha256(normalized.encode()).hexdigest() != revision:
+            issues.append('Native proof revision is not bound to the rules content')
+        if not valid_cases or not any(item.get('case') == 'loaded-revision' and item.get('revision_verified') is True for item in cases):
+            issues.append('Native proof has no successful loaded-revision challenge')
+        snapshot = proof.get('snapshot')
+        paths = [proof.get(key) for key in ['rules_path', 'config_path', 'executable_path']]
+        valid_snapshot = (isinstance(snapshot, dict) and len(snapshot) == 3
+                          and all(isinstance(path, str) and (ntpath.isabs(path) or path.startswith('/')) for path in paths)
+                          and set(snapshot) == set(paths)
+                          and all(isinstance(digest, str) and re.fullmatch('[0-9a-f]{64}', digest) for digest in snapshot.values())
+                          and snapshot.get(paths[0]) == proof.get('rules_sha256'))
+        if not valid_snapshot or not isinstance(proof.get('version'), str) or not re.search(r'\bv?4\.14\.\d+\b', proof['version']):
+            issues.append('Native proof lacks engine/configuration provenance')
 
     capture = artifacts_dir / 'traffic.pcapng'
     capture_valid = False

@@ -54,6 +54,16 @@ sudo .venv/bin/python scripts/verify-native-rules.py --output /home/labuser/nati
 
 All cases must pass; retain raw logtest output. This command includes a real 61-second window-expiry test. If it fails, return the results for repair before measured trials. It never uses a local Python rule emulator.
 
+The revised driver records every input event's rule result, including the base classification after a burst. It runs 25 boundary/control cases plus one loaded-revision challenge. It also records hashes of the installed executable, effective `etc/ossec.conf` and candidate rules, and refuses changes during the test. Keep the full output directory privately, including raw transcripts; a final matching rule ID alone is insufficient.
+
+The checked-in candidate contains a content-derived revision in classifier 110001's description. After editing rules, stamp them **before** copying them to the manager:
+
+```bash
+.venv/bin/python scripts/verify-native-rules.py --stamp-rules siem/healthcare_rules.xml
+```
+
+Stamping produces no native proof. Install the stamped candidate into the rules directory enabled in the manager configuration, restart/reload the lab manager as required, then use a new native proof directory. The first native challenge must return that exact revision; otherwise the driver stops with a failed proof. It supports the planned Wazuh 4.14.x family and records the actual patch version. All 26 results must pass on the actual installation before acceptance.
+
 To run a single scenario, replace `ens33` with the verified interface and choose a new run directory:
 
 ```bash
@@ -81,6 +91,8 @@ Save the commands/raw observations that support those values. Do not assume zero
 ```
 
 Exit zero means the implemented evidence checks found no listed gap; manually inspect packet details and query/dashboard outputs as well. Diagnostic, missing-channel and failed-generator runs must remain incomplete/invalid. S2's automated evaluator requires native digest matches; if the installed engine omits them, retain the evidence for explicit manual path/time attribution review rather than weakening the gate.
+
+New manifests include the planned operations and timing mode. The evaluator reconciles every terminal source event with a unique receipt, actor, HTTP status, target and result fields, plus measured source/receipt time bounds and the `hospital-win` archive endpoint. A full standalone baseline needs at least ten minutes, document activity and approved exports. A document-paused S2 background workload is explicitly recorded and cannot qualify as that standalone baseline. Legacy manifests or old final-ID-only native proofs remain incomplete/invalid; preserve them and generate new evidence rather than relabeling old runs.
 
 Import `siem/dashboard.ndjson` into Dashboard management Saved objects, verify numeric/keyword fields, inspect all eight panels and export it again from the live system. Its Vega health panel computes source-heartbeat freshness on a one-second timer: older than 90 seconds is stale; empty, malformed or future clock values are unknown. Set dashboard query refresh to ten seconds and test loss/recovery with the agent stopped/restarted. Check native agent connection status separately. The Vega definition is prepared but native import/rendering remains unverified. Report and second-student rebuild gates remain pending until completed.
 

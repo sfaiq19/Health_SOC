@@ -28,6 +28,17 @@ def test_download_resumes_and_verifies_before_publishing(tmp_path):
     assert not destination.with_suffix('.iso.part').exists()
 
 
+def test_complete_partial_is_verified_and_published_without_eof_request(tmp_path):
+    payload = b'already complete synthetic image'
+    destination = tmp_path / 'image.iso'
+    destination.with_suffix('.iso.part').write_bytes(payload)
+    def no_network(*args, **kwargs):
+        raise AssertionError('A complete matching partial must not request bytes past EOF')
+    fetch_verified('https://example.test/image.iso', destination, sha256(payload).hexdigest(), opener=no_network)
+    assert destination.read_bytes() == payload
+    assert not destination.with_suffix('.iso.part').exists()
+
+
 def test_wrong_digest_never_publishes_partial_image(tmp_path):
     destination = tmp_path / 'image.iso'
     with pytest.raises(ValueError):

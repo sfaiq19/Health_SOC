@@ -6,6 +6,7 @@ import time
 from .__main__ import runtime_lock
 from .client import LabClient, OperationFailed, run_context
 from .config import LabConfig
+from .evidence_contract import make_intent
 
 
 def run_scenario(config: LabConfig, scenario: str, run_id=None, seed=201, *, output: Path,
@@ -22,6 +23,7 @@ def run_scenario(config: LabConfig, scenario: str, run_id=None, seed=201, *, out
             if effective_policy not in {'observe', 'enforce'}:
                 raise OperationFailed('Server did not report an explicit policy mode')
             manifest.policy_mode = effective_policy
+            manifest.metadata['intent'] = make_intent(scenario, seed, effective_policy, diagnostic)
             if scenario == 's1':
                 for _ in range(6):
                     client.request('POST', '/api/auth/login', body={'username': 'clinician', 'password': 'known-invalid-synthetic-value'}, expected=(401,))

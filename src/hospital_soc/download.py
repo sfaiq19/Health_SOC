@@ -22,6 +22,9 @@ def fetch_verified(url: str, destination: Path, expected: str, *, opener=urllib.
         return
     partial = destination.with_name(destination.name + '.part')
     destination.parent.mkdir(parents=True, exist_ok=True)
+    if partial.is_file() and digest(partial) == expected:
+        partial.rename(destination)
+        return
     total = None
     errors = 0
     while total is None or partial.stat().st_size < total:

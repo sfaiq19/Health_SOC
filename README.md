@@ -4,6 +4,8 @@ Synthetic hospital security lab using Wazuh, Wireshark and a Python service. The
 
 **Current state:** hospital simulator, bounded baseline/three scenarios, independent export receivers and conservative evidence evaluator are implemented locally. Wazuh rules, dashboard saved objects and lab scripts are prepared for native validation. VM setup, Wazuh rule execution, cross-host packet analysis, measured trials, live dashboard import and final report remain pending. See the ledger for actual results; local tests are not live acceptance.
 
+The resumed Astra review findings and final-review follow-ups are repaired with **106 passing tests and 6 passing subtests**. See [the remediation record](docs/astra-remediation.md) for evidence and native validation limits. New manifests/proofs carry stricter intent and provenance; preserve old evidence and regenerate it rather than relabeling it.
+
 - Environment observations and reproduction: [docs/environment.md](docs/environment.md).
 - Task ledger and blockers: [docs/implementation-progress.md](docs/implementation-progress.md).
 - Original plan and acceptance gates: [docs/superpowers/plans/2026-10-22-healthcare-soc.md](docs/superpowers/plans/2026-10-22-healthcare-soc.md).

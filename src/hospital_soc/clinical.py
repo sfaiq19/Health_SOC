@@ -62,7 +62,7 @@ def result():
         intent('lab_result_created')
         db.execute('INSERT INTO lab_results VALUES (?,?,?)', (identity, order_id, value))
     g.action = 'lab_result_created'
-    g.details.update(order_id=order_id)
+    g.details.update(order_id=order_id, result_id=identity)
     return jsonify(result_id=identity), 201
 
 
@@ -73,7 +73,7 @@ def telemetry(device_id):
         abort(403)
     body = body_object()
     value = body.get('value')
-    if type(value) not in (float, int) or not math.isfinite(value) or not -10000 <= value <= 10000:
+    if type(value) not in (float, int) or not -10000 <= value <= 10000 or not math.isfinite(value):
         abort(400)
     unit = text_field(body, 'unit', 32)
     with database(current_app.extensions['lab']) as db:

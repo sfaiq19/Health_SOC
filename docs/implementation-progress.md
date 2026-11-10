@@ -4,6 +4,8 @@ Plan: docs/superpowers/plans/2026-10-22-healthcare-soc.md
 
 ## Execution status
 
+26 October repair update: the nine findings from the resumed Astra review and three follow-up gaps are fixed on `codex/astra-review-fixes`. Final verification: **106 tests and 6 subtests pass**; fresh actual loopback baseline/S1/S2/S3 generated, all 50 documents restored, and every run correctly remains incomplete for live acceptance. See [Astra remediation](astra-remediation.md) for the acceptance contract, RED/GREEN evidence, final review rulings and remaining native gates. This supersedes the earlier local-review readiness statement below. Native acceptance remains pending.
+
 Task 1 live setup remains pending. The local implementation of Tasks 2–8 has been developed under the user-approved split workflow. Task 9 has operator/demo/report guidance; its final evidence-based DOCX and second-student rebuild remain pending. No live SOC acceptance gate has passed.
 
 | Task | Source/local state | Remaining acceptance |

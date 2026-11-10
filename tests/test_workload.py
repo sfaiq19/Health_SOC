@@ -35,6 +35,10 @@ def test_baseline_makes_real_requests_without_label_leakage(lab, live_server, tm
     lines = (lab.cfg.root / 'logs/app.jsonl').read_text()
     assert 'is_attack' not in lines and 'scenario' not in lines
     assert all('token' not in x for x in result.receipts)
+    assert result.metadata['intent']['duration_s'] == 1
+    assert result.metadata['intent']['include_exports'] is False
+    assert result.metadata['intent']['pause_documents'] is False
+    assert result.metadata['intent']['operations']
 
 
 def test_failed_required_operation_keeps_manifest_invalid(lab, tmp_path):

@@ -58,6 +58,15 @@ def test_device_credentials_cannot_cross_identities_or_human_routes(lab, headers
     assert lab.client.get('/api/records/P0001', headers=headers(token)).status_code == 403
 
 
+def test_oversized_integer_telemetry_is_rejected_without_mutation(lab, headers):
+    token = lab.secrets['devices']['device-01']
+    response = lab.client.post('/api/devices/device-01/telemetry', headers=headers(token),
+                               json={'value': 10 ** 400, 'unit': 'synthetic'})
+    assert response.status_code == 400
+    with sqlite3.connect(lab.cfg.root / 'hospital.sqlite') as db:
+        assert db.execute('select count(*) from telemetry').fetchone()[0] == 0
+
+
 @pytest.mark.parametrize('body', [None, [], 'invalid', {'username': ['bad']}, {'username': 'x' * 500}])
 def test_malformed_login_payloads_are_rejected(lab, headers, body):
     result = lab.client.post('/api/auth/login', headers=headers(), json=body)

@@ -26,3 +26,15 @@ def test_audit_failure_prevents_clinical_mutation(lab, headers, login, monkeypat
     import sqlite3
     with sqlite3.connect(lab.cfg.root / 'hospital.sqlite') as db:
         assert db.execute('select count(*) from lab_orders').fetchone()[0] == 0
+
+
+def test_post_start_audit_hardlink_fails_closed_without_outside_write(lab, tmp_path):
+    import os
+    outside = tmp_path / 'outside.txt'
+    outside.write_bytes(b'unchanged')
+    log = lab.cfg.root / 'logs/app.jsonl'
+    log.unlink(missing_ok=True)
+    os.link(outside, log)
+    response = lab.client.get('/health', headers={'X-Lab-Run-ID': 'invalid'})
+    assert response.status_code == 503
+    assert outside.read_bytes() == b'unchanged'

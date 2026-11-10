@@ -1,4 +1,10 @@
-# Local validation on 22 October 2026
+# Latest local validation — 26 October 2026
+
+After the Astra repairs, the full suite passed **106 tests and 6 subtests in 106.85 seconds**. New coverage rejects incomplete workloads, inconsistent/malformed receipts, early/out-of-window activity, missing result fields, false native-proof sequences/provenance, post-start audit links, oversized telemetry integers and completed-partial download failures. See [the repair record](astra-remediation.md) for each finding and the independent review follow-ups.
+
+The fresh real HTTP diagnostic run is at `C:\Users\YOUR_USERNAME\HealthcareSOCLab\validation\20261025T192024390802Z`: 130 receipts, 214 source audit events, baseline and all three scenarios generated, and all 50 documents restored and verified. Its folder timestamp is UTC. Every evaluator result remains incomplete because timing is diagnostic and native Wazuh/cross-host evidence is absent. These are local software results only.
+
+## Earlier validation on 22 October 2026
 
 The implementation was tested on Windows with the VM powered off. These results establish local software behavior, not Wazuh detection, cross-host capture, measured timing or clinical realism.
 
