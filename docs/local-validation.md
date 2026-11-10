@@ -1,4 +1,22 @@
-# Latest local validation — 26 October 2026
+# Latest local validation — 10 November 2026
+
+The stale 26 October blanket closure statement is superseded by this 10 November 2026 re-verification on `codex/astra-review-fixes`.
+Following the evaluator hardening passes for Tasks A1–A4 (joining application document updates to FIM/inventory digests, reconciling actionable alert agent and request identities, enforcing strict 1:1 order-to-result binding for lab workflows, and verifying CLI handling of contradictory evidence), the test suite passes **132 tests and 6 subtests in 76.47 seconds** (focused evaluator & CLI suite: **58 passed in 16.20s**).
+
+The fresh real HTTP diagnostic run is at `C:\Users\YOUR_USERNAME\HealthcareSOCLab\validation\20261110T161056504321Z`: 130 receipts, 214 source audit events, baseline and all three scenarios generated, and all 50 documents restored and verified (`restored: 50, verified: true`). Every evaluator result correctly remains `incomplete` because timing is diagnostic and native Wazuh/cross-host capture evidence is absent. Neither `Laboratory result does not reconcile with its preceding planned order` nor `Application document update digests disagree with inventory or FIM evidence` appears in any scenario's `metrics.json`.
+
+| Workflow | Run ID | HTTP receipts | Source audit events | Live acceptance |
+|---|---|---:|---:|---|
+| Baseline | `da733281-60e4-45ea-bd04-d4873d0da303` | 35 | 65 | Incomplete |
+| S1 | `2d3070bb-1d0a-4130-bb08-e793fcfbb67e` | 38 | 39 | Incomplete |
+| S2 | `8629888b-3e5e-4670-9bb0-2007c2f70d4a` | 54 | 105 | Incomplete |
+| S3 | `5e45f48f-2547-4b34-befb-b31546022712` | 3 | 5 | Incomplete |
+
+Astra's external adversarial probes were re-executed from `$env:USERPROFILE\HealthcareSOCLab\reviews\2026-11-10-antigravity-reverification\independent-probes.py` (copied without modifying the original `2026-10-26-astra-verification` directory). Results at `C:\Users\YOUR_USERNAME\HealthcareSOCLab\reviews\2026-11-10-antigravity-reverification\independent-results.json` confirmed that all former false passes now fail closed (`s2-update-digests-disagree-inventory-fim`, `wrong-actionable-alert-agent`, `wrong-actionable-alert-request`, `unrelated-lab-result-orders` all evaluate as `incomplete`), while positive controls (`positive-baseline`, `positive-s2`, `receipt-result-object`) evaluate as `complete`.
+
+CLI contradictory bundle handling was verified by `test_cli_contradictory_evidence_bundle_writes_incomplete_metrics_and_returns_nonzero` in `tests/test_cli.py`: mutating PUT receipts and document update events to conflicting hashes results in exit code nonzero, `fim_correlated_files == 0`, and the expected issue persisted to `metrics.json`.
+
+## Previous validation on 26 October 2026
 
 After the Astra repairs, the full suite passed **106 tests and 6 subtests in 106.85 seconds**. New coverage rejects incomplete workloads, inconsistent/malformed receipts, early/out-of-window activity, missing result fields, false native-proof sequences/provenance, post-start audit links, oversized telemetry integers and completed-partial download failures. See [the repair record](astra-remediation.md) for each finding and the independent review follow-ups.
 

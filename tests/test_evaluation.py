@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from uuid import uuid4
 
 import pytest
 
@@ -236,3 +237,377 @@ def test_idle_tail_cannot_disguise_compressed_baseline(tmp_path, monkeypatch):
     result = evaluate_run(manifest, tmp_path)
     assert result['status'] != 'complete'
     assert any('schedule' in issue.lower() for issue in result['issues'])
+
+
+def _mutate_s2_app_hashes(tmp_path, manifest, doc_ids, sha_before='a' * 64, sha_after='b' * 64):
+    target = set(doc_ids)
+    for receipt in manifest['receipts']:
+        if receipt.get('method') == 'PUT' and receipt.get('result', {}).get('document_id') in target:
+            receipt['result']['sha256_before'] = sha_before
+            receipt['result']['sha256_after'] = sha_after
+
+    for name in ['app.jsonl', 'archives.jsonl', 'alerts.jsonl']:
+        items = [json.loads(line) for line in (tmp_path / name).read_text(encoding='utf-8').splitlines() if line.strip()]
+        for item in items:
+            data = item.get('data', item)
+            if data.get('action') == 'document_update' and data.get('document_id') in target:
+                data['sha256_before'] = sha_before
+                data['sha256_after'] = sha_after
+        (tmp_path / name).write_text(''.join(json.dumps(item) + '\n' for item in items), encoding='utf-8')
+
+
+def test_s2_single_document_application_hash_mismatch_reduces_corroboration(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    _mutate_s2_app_hashes(tmp_path, manifest, ['D001'], sha_before='a' * 64, sha_after='b' * 64)
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert result['fim_correlated_files'] == 49
+    assert 'Application document update digests disagree with inventory or FIM evidence' in result['issues']
+    assert 'FIM digest corroboration incomplete; manual path/time fallback is not auto-accepted' in result['issues']
+
+
+def test_s2_all_documents_application_hash_mismatch_fails_evaluation(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    all_docs = [f'D{i:03}' for i in range(1, 51)]
+    _mutate_s2_app_hashes(tmp_path, manifest, all_docs, sha_before='a' * 64, sha_after='b' * 64)
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert result['fim_correlated_files'] == 0
+    assert 'Application document update digests disagree with inventory or FIM evidence' in result['issues']
+    assert 'FIM digest corroboration incomplete; manual path/time fallback is not auto-accepted' in result['issues']
+
+
+def test_s2_contradictory_fim_observation_prevents_corroboration(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    alerts = [json.loads(line) for line in (tmp_path / 'alerts.jsonl').read_text(encoding='utf-8').splitlines() if line.strip()]
+    alerts.append({
+        'agent': {'name': 'hospital-win'},
+        'timestamp': '2026-10-22T00:00:10Z',
+        'syscheck': {
+            'path': 'C:/Lab/hospital/documents/D001.txt',
+            'sha256_before': 'c' * 64,
+            'sha256_after': 'd' * 64,
+        }
+    })
+    (tmp_path / 'alerts.jsonl').write_text(''.join(json.dumps(item) + '\n' for item in alerts), encoding='utf-8')
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert result['fim_correlated_files'] == 49
+    assert 'Contradictory or duplicate FIM observations detected' in result['issues']
+
+
+def test_s2_duplicate_fim_observation_prevents_corroboration(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    alerts = [json.loads(line) for line in (tmp_path / 'alerts.jsonl').read_text(encoding='utf-8').splitlines() if line.strip()]
+    first_fim = next(item for item in alerts if item.get('syscheck', {}).get('path', '').endswith('D001.txt'))
+    alerts.append(dict(first_fim))
+    (tmp_path / 'alerts.jsonl').write_text(''.join(json.dumps(item) + '\n' for item in alerts), encoding='utf-8')
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert result['fim_correlated_files'] == 49
+    assert 'Contradictory or duplicate FIM observations detected' in result['issues']
+
+
+def test_s2_missing_or_duplicate_application_updates_prevent_corroboration(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    manifest['receipts'] = [r for r in manifest['receipts'] if r.get('result', {}).get('document_id') != 'D001']
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert result['fim_correlated_files'] == 49
+    assert 'Missing or duplicate application document updates' in result['issues']
+
+
+def test_s2_unchanged_document_hash_yields_integer_correlation_count(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    before = json.loads((tmp_path / 'file-hashes-before.json').read_text(encoding='utf-8'))
+    after = json.loads((tmp_path / 'file-hashes-after.json').read_text(encoding='utf-8'))
+    after['D001'] = before['D001']
+    (tmp_path / 'file-hashes-after.json').write_text(json.dumps(after), encoding='utf-8')
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert result['fim_correlated_files'] == 49
+    assert isinstance(result['fim_correlated_files'], int)
+
+
+def test_s2_fim_missing_extension_does_not_corroborate(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    alerts = [json.loads(line) for line in (tmp_path / 'alerts.jsonl').read_text(encoding='utf-8').splitlines() if line.strip()]
+    for item in alerts:
+        if item.get('syscheck', {}).get('path', '').endswith('D001.txt'):
+            item['syscheck']['path'] = item['syscheck']['path'].removesuffix('.txt')
+    (tmp_path / 'alerts.jsonl').write_text(''.join(json.dumps(item) + '\n' for item in alerts), encoding='utf-8')
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert result['fim_correlated_files'] == 49
+    assert 'Contradictory or duplicate FIM observations detected' in result['issues']
+
+
+def test_actionable_alert_with_wrong_agent_name_is_rejected(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    alerts = [json.loads(line) for line in (tmp_path / 'alerts.jsonl').read_text(encoding='utf-8').splitlines() if line.strip()]
+    actionable = next(item for item in alerts if str(item.get('rule', {}).get('id')) == '110201')
+    actionable['agent']['name'] = 'other-host'
+    (tmp_path / 'alerts.jsonl').write_text(''.join(json.dumps(item) + '\n' for item in alerts), encoding='utf-8')
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete'
+    assert result['observed_rules'] == []
+    assert result['attack_detection_passed'] is False
+    assert result['alert_latencies_s'] == []
+    assert 'Actionable alert does not reconcile with its source event' in result['issues']
+
+
+def test_actionable_alert_with_missing_agent_is_rejected(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    alerts = [json.loads(line) for line in (tmp_path / 'alerts.jsonl').read_text(encoding='utf-8').splitlines() if line.strip()]
+    actionable = next(item for item in alerts if str(item.get('rule', {}).get('id')) == '110201')
+    actionable.pop('agent', None)
+    (tmp_path / 'alerts.jsonl').write_text(''.join(json.dumps(item) + '\n' for item in alerts), encoding='utf-8')
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete'
+    assert result['observed_rules'] == []
+    assert result['attack_detection_passed'] is False
+    assert result['alert_latencies_s'] == []
+    assert 'Actionable alert does not reconcile with its source event' in result['issues']
+
+
+def test_actionable_alert_with_unrelated_request_id_is_rejected(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    alerts = [json.loads(line) for line in (tmp_path / 'alerts.jsonl').read_text(encoding='utf-8').splitlines() if line.strip()]
+    actionable = next(item for item in alerts if str(item.get('rule', {}).get('id')) == '110201')
+    actionable['data']['request_id'] = str(uuid4())
+    (tmp_path / 'alerts.jsonl').write_text(''.join(json.dumps(item) + '\n' for item in alerts), encoding='utf-8')
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete'
+    assert result['observed_rules'] == []
+    assert result['attack_detection_passed'] is False
+    assert result['alert_latencies_s'] == []
+    assert 'Actionable alert does not reconcile with its source event' in result['issues']
+
+
+def test_actionable_alert_with_omitted_request_id_is_rejected(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    alerts = [json.loads(line) for line in (tmp_path / 'alerts.jsonl').read_text(encoding='utf-8').splitlines() if line.strip()]
+    actionable = next(item for item in alerts if str(item.get('rule', {}).get('id')) == '110201')
+    actionable['data'].pop('request_id', None)
+    (tmp_path / 'alerts.jsonl').write_text(''.join(json.dumps(item) + '\n' for item in alerts), encoding='utf-8')
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete'
+    assert result['observed_rules'] == []
+    assert result['attack_detection_passed'] is False
+    assert result['alert_latencies_s'] == []
+    assert 'Actionable alert does not reconcile with its source event' in result['issues']
+    assert result['fim_correlated_files'] == 50
+
+
+def test_unrelated_background_run_alerts_do_not_affect_evaluation(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    alerts = [json.loads(line) for line in (tmp_path / 'alerts.jsonl').read_text(encoding='utf-8').splitlines() if line.strip()]
+    actionable = next(item for item in alerts if str(item.get('rule', {}).get('id')) == '110201')
+    bg_alert = json.loads(json.dumps(actionable))
+    bg_alert['data']['run_id'] = str(uuid4())
+    bg_alert['agent'] = {'name': 'other-host'}
+    bg_alert['data']['request_id'] = str(uuid4())
+    alerts.append(bg_alert)
+    (tmp_path / 'alerts.jsonl').write_text(''.join(json.dumps(item) + '\n' for item in alerts), encoding='utf-8')
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] == 'complete', result
+    assert result['observed_rules'] == ['110201']
+    assert len(result['alert_latencies_s']) == 1
+    assert 'Actionable alert does not reconcile with its source event' not in result['issues']
+
+
+@pytest.mark.parametrize('mutation', ['wrong_agent', 'unrelated_request_id', 'missing_request_id'])
+def test_mixed_valid_and_invalid_target_run_alerts(tmp_path, monkeypatch, mutation):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    alerts = [json.loads(line) for line in (tmp_path / 'alerts.jsonl').read_text(encoding='utf-8').splitlines() if line.strip()]
+    actionable = next(item for item in alerts if str(item.get('rule', {}).get('id')) == '110201')
+    invalid_alert = json.loads(json.dumps(actionable))
+    if mutation == 'wrong_agent':
+        invalid_alert['agent'] = {'name': 'other-host'}
+    elif mutation == 'unrelated_request_id':
+        invalid_alert['data']['request_id'] = str(uuid4())
+    elif mutation == 'missing_request_id':
+        invalid_alert['data'].pop('request_id', None)
+    alerts.append(invalid_alert)
+    (tmp_path / 'alerts.jsonl').write_text(''.join(json.dumps(item) + '\n' for item in alerts), encoding='utf-8')
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert result['observed_rules'] == ['110201']
+    assert len(result['alert_latencies_s']) == 1
+    assert 'Actionable alert does not reconcile with its source event' in result['issues']
+
+
+def test_baseline_multi_pair_laboratory_orders_and_results_bind_successfully(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path)
+    unit_packet_verifier(monkeypatch, rows)
+    app_events = [json.loads(line) for line in (tmp_path / 'app.jsonl').read_text().splitlines() if line.strip()]
+    lab_orders = [e for e in app_events if e.get('action') == 'lab_order_created']
+    lab_results = [e for e in app_events if e.get('action') == 'lab_result_created']
+    assert len(lab_orders) == 5
+    assert len(lab_results) == 5
+    for order, result_event in zip(lab_orders, lab_results):
+        assert order['order_id'] == result_event['order_id']
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] == 'complete', result
+    assert result['issues'] == []
+
+
+def test_baseline_lab_result_missing_order_id_in_event_fails(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path)
+    unit_packet_verifier(monkeypatch, rows)
+    for name in ['app.jsonl', 'archives.jsonl']:
+        items = [json.loads(line) for line in (tmp_path / name).read_text().splitlines() if line.strip()]
+        for item in items:
+            data = item.get('data', item)
+            if data.get('action') == 'lab_result_created':
+                data.pop('order_id', None)
+                break
+        (tmp_path / name).write_text(''.join(json.dumps(item) + '\n' for item in items))
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert 'Laboratory result does not reconcile with its preceding planned order' in result['issues']
+
+
+@pytest.mark.parametrize('target', [
+    'order_receipt_order_id',
+    'order_event_order_id',
+    'result_receipt_result_id',
+    'result_event_result_id',
+])
+def test_baseline_lab_missing_required_ids_fails(tmp_path, monkeypatch, target):
+    manifest, rows = evidence_bundle(tmp_path)
+    unit_packet_verifier(monkeypatch, rows)
+    if target == 'order_receipt_order_id':
+        receipt = next(r for r in manifest['receipts'] if r.get('path') == '/api/lab/orders')
+        receipt['result'].pop('order_id', None)
+    elif target == 'order_event_order_id':
+        for name in ['app.jsonl', 'archives.jsonl']:
+            items = [json.loads(line) for line in (tmp_path / name).read_text().splitlines() if line.strip()]
+            for item in items:
+                data = item.get('data', item)
+                if data.get('action') == 'lab_order_created':
+                    data.pop('order_id', None)
+                    break
+            (tmp_path / name).write_text(''.join(json.dumps(item) + '\n' for item in items))
+    elif target == 'result_receipt_result_id':
+        receipt = next(r for r in manifest['receipts'] if r.get('path') == '/api/lab/results')
+        receipt['result'].pop('result_id', None)
+    elif target == 'result_event_result_id':
+        for name in ['app.jsonl', 'archives.jsonl']:
+            items = [json.loads(line) for line in (tmp_path / name).read_text().splitlines() if line.strip()]
+            for item in items:
+                data = item.get('data', item)
+                if data.get('action') == 'lab_result_created':
+                    data.pop('result_id', None)
+                    break
+            (tmp_path / name).write_text(''.join(json.dumps(item) + '\n' for item in items))
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert 'Laboratory result does not reconcile with its preceding planned order' in result['issues']
+
+
+def test_baseline_lab_result_unknown_order_id_fails(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path)
+    unit_packet_verifier(monkeypatch, rows)
+    unknown_id = '00000000-0000-0000-0000-000000999999'
+    for name in ['app.jsonl', 'archives.jsonl']:
+        items = [json.loads(line) for line in (tmp_path / name).read_text().splitlines() if line.strip()]
+        for item in items:
+            data = item.get('data', item)
+            if data.get('action') == 'lab_result_created':
+                data['order_id'] = unknown_id
+                break
+        (tmp_path / name).write_text(''.join(json.dumps(item) + '\n' for item in items))
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert 'Laboratory result does not reconcile with its preceding planned order' in result['issues']
+
+
+def test_baseline_lab_result_order_from_another_run_fails(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path)
+    unit_packet_verifier(monkeypatch, rows)
+    foreign_order_id = '00000000-0000-0000-0000-000000888888'
+    foreign_run_id = '00000000-0000-0000-0000-000000777777'
+    for name in ['app.jsonl', 'archives.jsonl']:
+        items = [json.loads(line) for line in (tmp_path / name).read_text().splitlines() if line.strip()]
+        for item in items:
+            data = item.get('data', item)
+            if data.get('action') == 'lab_result_created':
+                data['order_id'] = foreign_order_id
+                break
+        (tmp_path / name).write_text(''.join(json.dumps(item) + '\n' for item in items))
+    app_items = [json.loads(line) for line in (tmp_path / 'app.jsonl').read_text().splitlines() if line.strip()]
+    first_order = next(item for item in app_items if item.get('action') == 'lab_order_created')
+    foreign_order = dict(first_order)
+    foreign_order['run_id'] = foreign_run_id
+    foreign_order['event_id'] = str(uuid4())
+    foreign_order['request_id'] = str(uuid4())
+    foreign_order['order_id'] = foreign_order_id
+    app_items.append(foreign_order)
+    (tmp_path / 'app.jsonl').write_text(''.join(json.dumps(item) + '\n' for item in app_items))
+
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert 'Laboratory result does not reconcile with its preceding planned order' in result['issues']
+
+
+def test_baseline_lab_result_swapped_order_ids_fails(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path)
+    unit_packet_verifier(monkeypatch, rows)
+    app_items = [json.loads(line) for line in (tmp_path / 'app.jsonl').read_text().splitlines() if line.strip()]
+    lab_results = [e for e in app_items if e.get('action') == 'lab_result_created']
+    order_id_0 = lab_results[0]['order_id']
+    order_id_1 = lab_results[1]['order_id']
+
+    for name in ['app.jsonl', 'archives.jsonl']:
+        items = [json.loads(line) for line in (tmp_path / name).read_text().splitlines() if line.strip()]
+        res_count = 0
+        for item in items:
+            data = item.get('data', item)
+            if data.get('action') == 'lab_result_created':
+                if res_count == 0:
+                    data['order_id'] = order_id_1
+                elif res_count == 1:
+                    data['order_id'] = order_id_0
+                res_count += 1
+        (tmp_path / name).write_text(''.join(json.dumps(item) + '\n' for item in items))
+
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert 'Laboratory result does not reconcile with its preceding planned order' in result['issues']
+
+
+def test_baseline_lab_result_reused_order_id_fails(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path)
+    unit_packet_verifier(monkeypatch, rows)
+    app_items = [json.loads(line) for line in (tmp_path / 'app.jsonl').read_text().splitlines() if line.strip()]
+    lab_results = [e for e in app_items if e.get('action') == 'lab_result_created']
+    first_order_id = lab_results[0]['order_id']
+
+    for name in ['app.jsonl', 'archives.jsonl']:
+        items = [json.loads(line) for line in (tmp_path / name).read_text().splitlines() if line.strip()]
+        res_count = 0
+        for item in items:
+            data = item.get('data', item)
+            if data.get('action') == 'lab_result_created':
+                if res_count == 1:
+                    data['order_id'] = first_order_id
+                res_count += 1
+        (tmp_path / name).write_text(''.join(json.dumps(item) + '\n' for item in items))
+
+    result = evaluate_run(manifest, tmp_path)
+    assert result['status'] != 'complete', result
+    assert 'Laboratory result does not reconcile with its preceding planned order' in result['issues']

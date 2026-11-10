@@ -4,14 +4,29 @@ Plan: docs/superpowers/plans/2026-10-22-healthcare-soc.md
 
 ## Execution status
 
+10 November 2026 host preflight, ISO verification, and offline handoff preparation update:
+- **Host Preflight (`scripts/check-environment.ps1` & `hospital_soc.preflight`):** Gathered host facts at `evidence/environment/host-facts.json` and generated `evidence/environment/assessment.json`. Host characteristics: Microsoft Windows 11 Home, 14 logical processors, 15.45 GiB total RAM, 3.05 GiB free RAM, 265.28 GiB available disk space on `C:`, non-admin session, hypervisor present, VMware Workstation `26.0.0 build-25388281`, 0 running VMs (`Total running VMs: 0`). Network verification confirmed zero IP addresses and zero routes in `10.77.0.0/24` (no collision with proposed lab subnet). Assessment status remains conservatively `blocked` (`insufficient_free_ram`, `missing_administrator`, `missing_wazuh_agent_installed`, `unknown_lab_vm_running`, `unknown_lab_network_verified`).
+- **Ubuntu 24.04.5 ISO Retrieval & Verification (`scripts/download-ubuntu.py`):** Download resumed from existing partial installer (910 MB) to full 4,080,486,400 bytes (3,891.46 MiB). Verified against Ubuntu official `SHA256SUMS` with SHA-256 `97f3d7ffb032c3eb3b23d2c8be9cc76e60c2c1f2c0146ba5ba9fe01cafae0fd8`. Final ISO published at `$env:USERPROFILE\HealthcareSOCLab\installers\ubuntu-24.04.5-live-server-amd64.iso` with verification record `$env:USERPROFILE\HealthcareSOCLab\installers\ubuntu-verification.json`.
+- **Windows Hospital Runtime Seed & Agent XML Rendering:** Seeded `$env:USERPROFILE\HealthcareSOCLab\hospital` via `.venv\Scripts\python.exe -m hospital_soc --runtime "$env:USERPROFILE\HealthcareSOCLab\hospital" seed --seed 101`. Runtime verified with `hospital.sqlite` (200 patients, 10 devices), `secrets.json`, `seed-manifest.json`, and 50 dummy documents (`documents\D001.txt` through `documents\D050.txt`). Generated git-ignored `config/lab.local.json` pointing to local runtime root. Rendered `agent-localfile.rendered.xml` and `agent-fim.rendered.xml` into the runtime directory.
+- **Private Guest Handoff Archive (`scripts/prepare-handoff.py`):** Built `$env:USERPROFILE\HealthcareSOCLab\hospital\private-handoff.zip` (121,093 bytes, mode 0600) containing the A1–A4 hardened codebase, client local configuration, and disposable runtime secrets for transfer to the guest VM.
+- **Native Acceptance Status:** All live VM and Wazuh acceptance gates remain pending as planned. VM boot was not initiated under the low-memory workflow.
+
+10 November 2026 re-verification update: The stale 26 October blanket closure statement is superseded by completion of Tasks A1–A4 on `codex/astra-review-fixes`. Evaluator hardening now strictly binds application document updates to FIM/inventory digests, reconciles actionable alert agent and request identities, enforces 1:1 order-to-result binding for lab workflows, and verifies CLI handling of contradictory evidence.
+- **Test execution:** `pytest tests/test_evaluation.py tests/test_cli.py -q --tb=short` → **58 passed in 16.20s**; full suite `pytest -q --tb=short` → **132 passed, 6 subtests passed in 76.47s**.
+- **CLI contradictory bundle verification:** `test_cli_contradictory_evidence_bundle_writes_incomplete_metrics_and_returns_nonzero` passes, verifying exit code nonzero, `fim_correlated_files == 0`, and `Application document update digests disagree with inventory or FIM evidence` in `metrics.json`.
+- **External probe replay:** `$env:USERPROFILE\HealthcareSOCLab\reviews\2026-11-10-antigravity-reverification\independent-probes.py` replayed against `independent-results.json`: all former false passes (`s2-update-digests-disagree-inventory-fim`, `wrong-actionable-alert-agent`, `wrong-actionable-alert-request`, `unrelated-lab-result-orders`) now fail closed (`incomplete`), while controls (`positive-baseline`, `positive-s2`, `receipt-result-object`) pass (`complete`).
+- **Fresh HTTP validation run:** Preserved at `$env:USERPROFILE\HealthcareSOCLab\validation\20261110T161056504321Z`. 130 HTTP receipts, 214 source audit events, baseline and all three scenarios generated, and all 50 document seed hashes restored and verified. All workflows evaluate as `incomplete` for live acceptance (due to diagnostic timing and absent native Wazuh/cross-host captures). Neither `Laboratory result does not reconcile with its preceding planned order` nor `Application document update digests disagree with inventory or FIM evidence` appears in any scenario's `metrics.json`.
+- **Workflows:** Baseline (`da733281-60e4-45ea-bd04-d4873d0da303`: 35 receipts, 65 events, Incomplete), S1 (`2d3070bb-1d0a-4130-bb08-e793fcfbb67e`: 38 receipts, 39 events, Incomplete), S2 (`8629888b-3e5e-4670-9bb0-2007c2f70d4a`: 54 receipts, 105 events, Incomplete), S3 (`5e45f48f-2547-4b34-befb-b31546022712`: 3 receipts, 5 events, Incomplete).
+- **Native acceptance:** Still pending regardless of local test outcomes. Tasks 1–9 live VM and Wazuh acceptance remain open.
+
 26 October repair update: the nine findings from the resumed Astra review and three follow-up gaps are fixed on `codex/astra-review-fixes`. Final verification: **106 tests and 6 subtests pass**; fresh actual loopback baseline/S1/S2/S3 generated, all 50 documents restored, and every run correctly remains incomplete for live acceptance. See [Astra remediation](astra-remediation.md) for the acceptance contract, RED/GREEN evidence, final review rulings and remaining native gates. This supersedes the earlier local-review readiness statement below. Native acceptance remains pending.
 
 Task 1 live setup remains pending. The local implementation of Tasks 2–8 has been developed under the user-approved split workflow. Task 9 has operator/demo/report guidance; its final evidence-based DOCX and second-student rebuild remain pending. No live SOC acceptance gate has passed.
 
 | Task | Source/local state | Remaining acceptance |
 |---|---|---|
-| 1 | Measured preflight, powered-off VMware VM/disk, resumable installer retrieval | Verified ISO, installed guest, isolated network, privileges, Wazuh/agent, clock/capture/stability |
-| 2 | Real hospital API, seed, SQLite, auth, audit and file operations; local tests pass | Cross-host requests and live agent collection |
+| 1 | Measured preflight (10 Nov 2026), VMware 26.0.0, powered-off VM definition, verified Ubuntu 24.04.5 ISO | Installed guest, isolated network (10.77.0.0/24), privileges, Wazuh/agent, clock/capture/stability |
+| 2 | Hospital API, seeded runtime ($env:USERPROFILE\HealthcareSOCLab\hospital), rendered XML snippets, private-handoff.zip; local tests pass | Cross-host requests and live agent collection |
 | 3 | Baseline scheduler and actual diagnostic loopback workflow | 30-minute calibration, holdouts and captured frames |
 | 4 | Agent/FIM snippets, archive instructions | Apply/verify native collection, mappings, inventory, interruption/recovery |
 | 5 | S1 requests and candidate XML correlation rules | Native boundary/group tests, real alert/capture results |
@@ -52,7 +67,26 @@ Pre-flight interfaces: Task 1 supplies addresses, runtime roots, versions, endpo
 
 ## Task 1 evidence
 
-Source verification: preflight unit tests first failed with missing `hospital_soc`; after implementation they pass. Live readiness assessment correctly returns nonzero with blockers. This is not evidence that installation, network capture, or detection works.
+Source verification: preflight unit tests pass. Live readiness assessment correctly returns nonzero with blockers. This is not evidence that installation, network capture, or detection works.
+
+10 November 2026 preflight observation record:
+- Local preflight re-executed via `scripts/check-environment.ps1` → `evidence/environment/host-facts.json`.
+- Gate assessment executed via `hospital_soc.preflight` → `evidence/environment/assessment.json`.
+- Host measurements: Microsoft Windows 11 Home, 14 logical processors, 15.45 GiB total RAM, 3.05 GiB free RAM (below 10 GiB allocation guard), 265.28 GiB free disk on `C:`, non-administrator shell, hypervisor present, VMware Workstation `26.0.0 build-25388281`, 0 running VMs.
+- Subnet check: zero routes and zero IPs in `10.77.0.0/24` on active host interfaces; no address conflict.
+- Assessment status: `blocked` (`insufficient_free_ram`, `missing_administrator`, `missing_wazuh_agent_installed`, `unknown_lab_vm_running`, `unknown_lab_network_verified`).
+
+Ubuntu 24.04.5 installer verification:
+- Resumed and completed via `scripts/download-ubuntu.py`.
+- Size: 4,080,486,400 bytes; SHA-256: `97f3d7ffb032c3eb3b23d2c8be9cc76e60c2c1f2c0146ba5ba9fe01cafae0fd8` matching `https://releases.ubuntu.com/24.04/SHA256SUMS`.
+- ISO location: `$env:USERPROFILE\HealthcareSOCLab\installers\ubuntu-24.04.5-live-server-amd64.iso`.
+- Receipt record: `$env:USERPROFILE\HealthcareSOCLab\installers\ubuntu-verification.json`.
+
+Offline Windows hospital runtime & handoff preparation (Task 2 prep):
+- Hospital runtime seeded at `$env:USERPROFILE\HealthcareSOCLab\hospital` with `--seed 101` (200 patients, 10 devices, 50 dummy documents `D001.txt`..`D050.txt`, `secrets.json`, `seed-manifest.json`).
+- `config/lab.local.json` configured with local runtime path (git-ignored).
+- Rendered XML snippets: `$env:USERPROFILE\HealthcareSOCLab\hospital\agent-localfile.rendered.xml` and `$env:USERPROFILE\HealthcareSOCLab\hospital\agent-fim.rendered.xml`.
+- Private guest handoff archive: `$env:USERPROFILE\HealthcareSOCLab\hospital\private-handoff.zip` (121,093 bytes, mode 0600) prepared via `scripts/prepare-handoff.py`.
 
 Ruling: initialize Git on `implementation/healthcare-soc` in this previously non-repository project directory. There is no main branch or existing source checkout to isolate; preserve the supplied brief and plan in place. Cost if wrong: none to existing Git history because none existed.
 
@@ -80,7 +114,7 @@ Git staging and `git diff --cached --check` succeeded. Commit was attempted but 
 - [x] Read design and plan; inspect actual host and hypervisor inventory.
 - [x] Implement conservative, repeatable environment collection and gate assessment.
 - [x] Prepare the explicitly requested new powered-off VM definition and verify its disk allocation.
-- [ ] Complete and verify Ubuntu installer download; install the guest OS.
+- [x] Complete and verify Ubuntu installer download (SHA-256 verified; receipt at `$env:USERPROFILE\HealthcareSOCLab\installers\ubuntu-verification.json`); guest OS installation pending.
 - [ ] Verify a suitable VM, network isolation, memory capacity, and installation privileges.
 - [ ] Install/configure Wazuh and agent; establish authenticated dashboard and agent connectivity.
 - [ ] Capture cross-host smoke traffic, measure clock offset, and complete stability check.

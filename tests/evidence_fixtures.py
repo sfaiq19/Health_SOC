@@ -24,8 +24,10 @@ def evidence_bundle(root, scenario='baseline'):
     before = {f'D{i:03}': sha256(f'before-{i}'.encode()).hexdigest() for i in range(1, 51)}
     after = {f'D{i:03}': sha256(f'after-{i}'.encode()).hexdigest() for i in range(1, 51)}
     events, rows, logged_in = [], [], set()
+    last_order_id = None
 
     def record(op):
+        nonlocal last_order_id
         request_id = str(uuid4())
         event = {'run_id': identity, 'event_id': str(uuid4()), 'request_id': request_id,
                  'service': 'hospital-lab', 'action': op['action'], 'outcome': 'denied' if op['status'] == 401 else 'success',
@@ -33,11 +35,12 @@ def evidence_bundle(root, scenario='baseline'):
                  'event_time': iso(op['at'] + .01), **op['details']}
         result = {}
         if op['action'] == 'lab_order_created':
-            result = {'order_id': str(uuid4())}
+            last_order_id = str(uuid4())
+            result = {'order_id': last_order_id}
             event.update(result)
         elif op['action'] == 'lab_result_created':
             result = {'result_id': str(uuid4())}
-            event.update(result)
+            event.update(order_id=last_order_id, **result)
         elif op['action'] == 'export_completed':
             result = {'transfer_id': str(uuid4()), 'bytes_sent': op['details']['bytes_sent'],
                       'payload_sha256': sha256(b'synthetic fixture payload').hexdigest()}
@@ -65,7 +68,7 @@ def evidence_bundle(root, scenario='baseline'):
     alerts = []
     if scenario == 's2':
         last = next(event for event in reversed(events) if event['action'] == 'document_update')
-        alerts.append({'data': last, 'rule': {'id': '110201'}, 'timestamp': iso(50)})
+        alerts.append({'agent': {'name': 'hospital-win'}, 'data': last, 'rule': {'id': '110201'}, 'timestamp': iso(50)})
         for i, name in enumerate(before):
             alerts.append({'agent': {'name': 'hospital-win'}, 'timestamp': iso(i + 1),
                            'syscheck': {'path': f'C:/Lab/hospital/documents/{name}.txt',

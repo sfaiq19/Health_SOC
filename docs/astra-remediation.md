@@ -48,3 +48,44 @@ Final review rulings: actual loaded Wazuh behavior, native acceptance, cross-hos
 All nine original findings and the three review follow-ups are addressed in implemented code with passing local regression coverage. No VM/service installation, merge or publication is included in this remediation.
 
 Native Wazuh execution, actual loaded-rule behavior, cross-host capture, dashboard import and final measured trials remain pending regardless of local test outcomes.
+
+## Evaluator Re-verification & Release Gate — 10 November 2026
+
+The stale 26 October blanket closure statement regarding evaluator completeness is hereby superseded by the re-verification results of Tasks A1–A4 on branch `codex/astra-review-fixes`.
+
+### Hardened Evaluator Controls
+1. **Application-to-FIM/Inventory Digest Corroboration (Task A1):** S2 evaluation strictly joins application update digests (`app.jsonl`, `archives.jsonl`, PUT receipts) against file inventory before/after hashes and FIM syscheck digests. Contradictory application hashes prevent FIM correlation (`fim_correlated_files == 0`) and flag `Application document update digests disagree with inventory or FIM evidence`.
+2. **Actionable Alert Reconciliation (Task A2):** Actionable alerts (e.g., rule 110201) must reconcile agent identity (`hospital-win`) and source event `request_id`. Tampered agent names or mismatched request IDs fail closed (`observed_rules == []`, `attack_detection_passed == False`, `alert_latencies_s == []`, issue: `Actionable alert does not reconcile with its source event`).
+3. **Lab Result Order Binding (Task A3):** Baseline lab results are strictly paired one-to-one with preceding successful lab orders matching the canonical `order_id` in the same run. Swapped, reused, missing, or cross-run order IDs fail closed with `Laboratory result does not reconcile with its preceding planned order`.
+4. **CLI Contradictory Bundle Evaluation (Task A4):** `tests/test_cli.py` includes `test_cli_contradictory_evidence_bundle_writes_incomplete_metrics_and_returns_nonzero`, verifying that CLI evaluation of a mutated S2 bundle writes `metrics.json` with `status: incomplete`, `fim_correlated_files: 0`, and issues containing `Application document update digests disagree with inventory or FIM evidence`, exiting nonzero.
+
+### External Probe Replay Results
+Replayed Astra's independent adversarial probes from `$env:USERPROFILE\HealthcareSOCLab\reviews\2026-11-10-antigravity-reverification\independent-probes.py` (copied from the read-only `2026-10-26-astra-verification` directory). Results persisted to `C:\Users\YOUR_USERNAME\HealthcareSOCLab\reviews\2026-11-10-antigravity-reverification\independent-results.json`:
+- `positive-baseline`: `status == 'complete'`, `issues == []`
+- `positive-s2`: `status == 'complete'`, `issues == []`, `fim_correlated_files == 50`
+- `receipt-result-object`: `status == 'complete'` (valid control: `/health` receipt with `result == {}`)
+- `s2-update-digests-disagree-inventory-fim`: changed from `complete` (`fim_correlated_files: 50`) to `incomplete` (`fim_correlated_files: 0`) with issues `["Application document update digests disagree with inventory or FIM evidence", "FIM digest corroboration incomplete; manual path/time fallback is not auto-accepted"]`
+- `wrong-actionable-alert-agent`: changed from `complete` (`observed_rules: ["110201"]`) to `incomplete` (`observed_rules: []`, `attack_detection_passed: false`, `alert_latencies_s: []`) with issues `["Actionable alert does not reconcile with its source event", "Expected detection families missing, or actionable baseline incidents observed"]`
+- `wrong-actionable-alert-request`: changed from `complete` (`observed_rules: ["110201"]`) to `incomplete` (`observed_rules: []`, `attack_detection_passed: false`, `alert_latencies_s: []`) with issues `["Actionable alert does not reconcile with its source event", "Expected detection families missing, or actionable baseline incidents observed"]`
+- `unrelated-lab-result-orders`: changed from `complete` to `incomplete` with issue `["Laboratory result does not reconcile with its preceding planned order"]`
+
+### Test Suite Execution
+- Focused evaluator & CLI suite: `rtk proxy .venv\Scripts\python.exe -m pytest tests/test_evaluation.py tests/test_cli.py -q --tb=short` → **58 passed in 16.20s**.
+- Full test suite: `rtk proxy .venv\Scripts\python.exe -m pytest -q --tb=short` → **132 passed, 6 subtests passed in 76.47s (0:01:16)**.
+- Git diff hygiene: `rtk proxy git diff --check` passed cleanly.
+
+### Fresh HTTP Validation Run
+Executed `rtk proxy .venv\Scripts\python.exe scripts/run-local-validation.py`.
+Evidence preserved at: `C:\Users\YOUR_USERNAME\HealthcareSOCLab\validation\20261110T161056504321Z`.
+
+| Workflow | Run ID | HTTP receipts | Source audit events | Live acceptance |
+|---|---|---:|---:|---|
+| Baseline | `da733281-60e4-45ea-bd04-d4873d0da303` | 35 | 65 | Incomplete |
+| S1 | `2d3070bb-1d0a-4130-bb08-e793fcfbb67e` | 38 | 39 | Incomplete |
+| S2 | `8629888b-3e5e-4670-9bb0-2007c2f70d4a` | 54 | 105 | Incomplete |
+| S3 | `5e45f48f-2547-4b34-befb-b31546022712` | 3 | 5 | Incomplete |
+| **Total** | | **130** | **214** | |
+
+- **Restoration:** All 50 seed documents restored and verified (`restored: 50, verified: true`).
+- **Live Acceptance:** All four workflows evaluate as `incomplete` for live acceptance due to diagnostic timing and absent native Wazuh/cross-host captures.
+- **Integrity Checks Confirmed:** Neither `Laboratory result does not reconcile with its preceding planned order` nor `Application document update digests disagree with inventory or FIM evidence` appeared in any scenario's `metrics.json`. Baseline has only diagnostic timing/duration and missing native evidence; S2 only lacks native evidence/captures.

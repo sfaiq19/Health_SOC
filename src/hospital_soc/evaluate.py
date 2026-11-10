@@ -11,8 +11,15 @@ import subprocess
 from uuid import UUID
 
 from .packets import validate_pcapng, verified_packet_rows
-from .evidence_contract import canonical_uuid, validate_receipts, reconcile_operations
+from .evidence_contract import canonical_uuid as _raw_canonical_uuid, validate_receipts, reconcile_operations
 from .native_validation import cases as native_cases
+
+
+def canonical_uuid(value):
+    try:
+        return _raw_canonical_uuid(value)
+    except (ValueError, TypeError, AttributeError):
+        return False
 
 EXPECTED = {'s1': {'110101', '110102', '110103'}, 's2': {'110201'}, 's3': {'110302'}, 'baseline': set()}
 ACTIONABLE = {'110101', '110102', '110103', '110201', '110301', '110302'}
@@ -86,7 +93,7 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
                         for key in ['run_id', 'event_id', 'request_id', 'event_time']:
                             if key in data and not isinstance(data[key], str):
                                 raise ValueError(f'{key} must be a string')
-                        if data.get('service') == 'hospital-lab':
+                        if name != 'alerts.jsonl' and data.get('service') == 'hospital-lab':
                             if not canonical_uuid(data.get('event_id')) or not canonical_uuid(data.get('request_id')):
                                 raise ValueError('Hospital event identity missing or invalid')
             return value
@@ -100,8 +107,33 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
     archives = [event.get('data', {}) for event in raw_archives
                 if event.get('data', {}).get('run_id') == run_id]
     alerts = load('alerts.jsonl', True)
-    observed = {str(event.get('rule', {}).get('id')) for event in alerts
-                if event.get('data', {}).get('run_id') == run_id and str(event.get('rule', {}).get('id')) in ACTIONABLE}
+    source_by_id = {event.get('event_id'): event for event in source if canonical_uuid(event.get('event_id'))}
+    observed = set()
+    for event in alerts:
+        data = event.get('data') if isinstance(event.get('data'), dict) else {}
+        rule = event.get('rule') if isinstance(event.get('rule'), dict) else {}
+        if data.get('run_id') == run_id and str(rule.get('id')) in ACTIONABLE:
+            original = source_by_id.get(data.get('event_id'))
+            valid = (
+                isinstance(event.get('agent'), dict)
+                and event['agent'].get('name') == 'hospital-win'
+                and canonical_uuid(data.get('event_id'))
+                and canonical_uuid(data.get('request_id'))
+                and original is not None
+                and all(data.get(key) == original.get(key) for key in ['run_id', 'event_id', 'request_id', 'action', 'outcome', 'actor_id', 'event_time'])
+            )
+            if not valid:
+                issues.append('Actionable alert does not reconcile with its source event')
+                continue
+            try:
+                latency = (instant(event['timestamp']) - instant(data['event_time'])).total_seconds()
+                observed.add(str(rule.get('id')))
+                result['alert_latencies_s'].append(latency)
+                if not -1 <= latency <= 30:
+                    issues.append('Alert latency outside target or clock uncertainty')
+            except (KeyError, ValueError, TypeError):
+                issues.append('Alert latency unknown')
+
     result['expected_rules'], result['observed_rules'] = sorted(EXPECTED[scenario]), sorted(observed)
     result['attack_detection_passed'] = (EXPECTED[scenario] <= observed) if scenario != 'baseline' else not observed
     if not result['attack_detection_passed']:
@@ -129,7 +161,6 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
                       collection_coverage=len(source_ids & set(archive_ids)) / len(source_ids))
         if result['collection_coverage'] != 1:
             issues.append('Source-to-archive coverage is incomplete')
-        source_by_id = {event.get('event_id'): event for event in source}
         for event in raw_archives:
             data = event.get('data', {})
             original = source_by_id.get(data.get('event_id'))
@@ -149,18 +180,6 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
         request_ids = {event.get('request_id') for event in source}
         if not manifest['receipts'] or any(receipt.get('request_id') not in request_ids for receipt in manifest['receipts']):
             issues.append('Generator receipts do not reconcile with source requests')
-        for event in alerts:
-            if event.get('data', {}).get('run_id') == run_id and str(event.get('rule', {}).get('id')) in ACTIONABLE:
-                try:
-                    original = source_by_id.get(event['data'].get('event_id'))
-                    if original is None or any(event['data'].get(key) != original.get(key) for key in ['action', 'outcome', 'actor_id', 'event_time']):
-                        issues.append('Actionable alert does not reconcile with its source event')
-                    latency = (instant(event['timestamp']) - instant(event['data']['event_time'])).total_seconds()
-                    result['alert_latencies_s'].append(latency)
-                    if not -1 <= latency <= 30:
-                        issues.append('Alert latency outside target or clock uncertainty')
-                except (KeyError, ValueError, TypeError):
-                    issues.append('Alert latency unknown')
 
     observations = load('observations.json')
     if not isinstance(observations, dict):
@@ -262,23 +281,121 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
 
     if scenario == 's2':
         before, after = load('file-hashes-before.json'), load('file-hashes-after.json')
-        if isinstance(before, dict) and isinstance(after, dict) and len(before) == 50 and set(before) == set(after):
+        expected_docs = {f'D{i:03}' for i in range(1, 51)}
+        valid_inventories = (
+            isinstance(before, dict) and isinstance(after, dict)
+            and set(before) == expected_docs and set(after) == expected_docs
+            and all(isinstance(v, str) and bool(re.fullmatch(r'[0-9a-f]{64}', v)) for v in before.values())
+            and all(isinstance(v, str) and bool(re.fullmatch(r'[0-9a-f]{64}', v)) for v in after.values())
+        )
+        if valid_inventories:
             correlated = set()
             document_root = manifest.get('metadata', {}).get('document_root') if isinstance(manifest.get('metadata', {}), dict) else None
             if not isinstance(document_root, str) or not ntpath.isabs(document_root):
                 issues.append('Canonical dummy document root is missing')
+
+            fim_events_by_doc = {}
             for event in alerts:
-                check = event.get('syscheck', {})
-                if event.get('agent', {}).get('name') != 'hospital-win' or not check.get('path'):
+                if not isinstance(event, dict):
                     continue
-                identity = check['path'].replace('\\', '/').rsplit('/', 1)[-1].removesuffix('.txt')
+                check = event.get('syscheck')
+                if not isinstance(check, dict) or not check.get('path'):
+                    continue
+                if event.get('agent', {}).get('name') != 'hospital-win':
+                    continue
                 try:
                     in_window = start <= instant(event['timestamp']) <= end + timedelta(seconds=120)
                 except (KeyError, ValueError, TypeError):
                     in_window = False
-                same_root = isinstance(document_root, str) and ntpath.normcase(ntpath.normpath(ntpath.dirname(check['path']))) == ntpath.normcase(ntpath.normpath(document_root))
-                if identity in before and same_root and in_window and before[identity] != after[identity] and check.get('sha256_before') == before[identity] and check.get('sha256_after') == after[identity]:
-                    correlated.add(identity)
+                if not in_window:
+                    continue
+                path = check['path']
+                same_root = (isinstance(document_root, str)
+                             and ntpath.normcase(ntpath.normpath(ntpath.dirname(path))) == ntpath.normcase(ntpath.normpath(document_root)))
+                if not same_root:
+                    continue
+                filename = path.replace('\\', '/').rsplit('/', 1)[-1]
+                if filename.endswith('.txt'):
+                    fim_events_by_doc.setdefault(filename.removesuffix('.txt'), []).append(check)
+                else:
+                    fim_events_by_doc.setdefault(f'invalid:{filename}', []).append(check)
+
+            for name in fim_events_by_doc:
+                if name not in expected_docs:
+                    issues.append('Contradictory or duplicate FIM observations detected')
+
+            manifest_receipts = manifest.get('receipts', []) if isinstance(manifest.get('receipts'), list) else []
+            for r in manifest_receipts:
+                if isinstance(r, dict) and r.get('method') == 'PUT':
+                    res = r.get('result')
+                    d_id = res.get('document_id') if isinstance(res, dict) else None
+                    p_id = r.get('path', '').removeprefix('/api/documents/')
+                    if (d_id and d_id not in expected_docs) or (p_id and p_id not in expected_docs and r.get('path', '').startswith('/api/documents/')):
+                        issues.append('Missing or duplicate application document updates')
+
+            for e in source:
+                if isinstance(e, dict) and e.get('action') == 'document_update':
+                    if e.get('document_id') not in expected_docs:
+                        issues.append('Missing or duplicate application document updates')
+
+            for doc_id in sorted(expected_docs):
+                put_receipts = [
+                    r for r in manifest_receipts
+                    if isinstance(r, dict) and r.get('method') == 'PUT'
+                    and (
+                        r.get('path') == f'/api/documents/{doc_id}'
+                        or (isinstance(r.get('result'), dict) and r['result'].get('document_id') == doc_id)
+                    )
+                ]
+                req_ids = {r.get('request_id') for r in put_receipts if r.get('request_id')}
+                doc_sources = [
+                    e for e in source
+                    if isinstance(e, dict) and e.get('action') == 'document_update'
+                    and (e.get('document_id') == doc_id or e.get('request_id') in req_ids)
+                ]
+                if len(put_receipts) != 1 or len(doc_sources) != 1:
+                    issues.append('Missing or duplicate application document updates')
+                    continue
+
+                receipt = put_receipts[0]
+                source_event = doc_sources[0]
+                receipt_result = receipt.get('result')
+                valid_app_update = (
+                    receipt.get('status') == 200
+                    and isinstance(receipt_result, dict)
+                    and receipt_result.get('document_id') == doc_id
+                    and source_event.get('request_id') == receipt.get('request_id')
+                    and source_event.get('action') == 'document_update'
+                    and source_event.get('outcome') == 'success'
+                    and source_event.get('http_status') == 200
+                    and source_event.get('document_id') == doc_id
+                )
+                if not valid_app_update:
+                    issues.append('Missing or duplicate application document updates')
+                    continue
+
+                app_before = receipt_result.get('sha256_before')
+                app_after = receipt_result.get('sha256_after')
+                src_before = source_event.get('sha256_before')
+                src_after = source_event.get('sha256_after')
+                inv_before = before[doc_id]
+                inv_after = after[doc_id]
+
+                if (inv_before == inv_after
+                        or app_before != inv_before or app_after != inv_after
+                        or src_before != inv_before or src_after != inv_after):
+                    issues.append('Application document update digests disagree with inventory or FIM evidence')
+                    continue
+
+                fims = fim_events_by_doc.get(doc_id, [])
+                if not fims:
+                    continue
+                if len(fims) > 1 or any(f.get('sha256_before') != inv_before or f.get('sha256_after') != inv_after for f in fims):
+                    issues.append('Contradictory or duplicate FIM observations detected')
+                    continue
+
+                correlated.add(doc_id)
+
             result['fim_correlated_files'] = len(correlated)
             if len(correlated) != 50:
                 issues.append('FIM digest corroboration incomplete; manual path/time fallback is not auto-accepted')
