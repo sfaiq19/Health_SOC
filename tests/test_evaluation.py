@@ -28,6 +28,24 @@ def test_exact_fim_root_and_digests_reconcile_in_unit_fixture(tmp_path, monkeypa
     assert result['fim_correlated_files'] == 50
 
 
+def test_windows_fim_case_variants_still_require_one_exact_hash_pair(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path, scenario='s2')
+    unit_packet_verifier(monkeypatch, rows)
+    path = tmp_path / 'alerts.jsonl'
+    alerts = [json.loads(line) for line in path.read_text().splitlines()]
+    records = [alert for alert in alerts if 'syscheck' in alert]
+    for alert in records:
+        alert['syscheck']['path'] = alert['syscheck']['path'].lower()
+    path.write_text(''.join(json.dumps(a) + '\n' for a in alerts))
+    assert evaluate_run(manifest, tmp_path)['fim_correlated_files'] == 50
+    duplicate = json.loads(json.dumps(records[0]))
+    duplicate['syscheck']['path'] = duplicate['syscheck']['path'].upper()
+    with path.open('a') as stream:
+        stream.write(json.dumps(duplicate) + '\n')
+    result = evaluate_run(manifest, tmp_path)
+    assert result['fim_correlated_files'] == 49 and result['status'] == 'incomplete'
+
+
 def test_delayed_archives_cannot_be_hidden_by_declared_zero_index_delay(tmp_path, monkeypatch):
     manifest, rows = evidence_bundle(tmp_path)
     unit_packet_verifier(monkeypatch, rows)
@@ -349,6 +367,45 @@ def test_s2_fim_missing_extension_does_not_corroborate(tmp_path, monkeypatch):
     assert 'Contradictory or duplicate FIM observations detected' in result['issues']
 
 
+@pytest.mark.parametrize('rule, scenario, action, source_changes, alert_changes, eligible', [
+    ('110201', 's2', 'service_heartbeat', {}, {}, False),
+    ('110201', 's2', 'document_update', {'outcome': 'failure'}, {}, False),
+    ('110201', 's2', 'document_update', {}, {'actor_key': 'other|host'}, False),
+    ('110201', 's2', 'document_update', {'service': 'other'}, {}, False),
+    ('110101', 's1', 'login_success', {}, {}, False),
+    ('110101', 's1', 'login_failure', {}, {}, True),
+    ('110102', 's1', 'record_read', {'care_scope': 'assigned'}, {}, False),
+    ('110102', 's1', 'record_read', {}, {'care_scope': 'assigned'}, False),
+    ('110102', 's1', 'record_read', {}, {}, True),
+    ('110103', 's1', 'record_read', {'outcome': 'denied'}, {}, False),
+    ('110103', 's1', 'record_read', {}, {}, True),
+    ('110301', 's3', 'export_completed', {'destination_approved': 'yes'}, {}, False),
+    ('110301', 's3', 'export_completed', {'bytes_sent': 999999}, {'bytes_sent': '999999'}, True),
+    ('110301', 's3', 'export_completed', {'bytes_sent': 1000000}, {}, False),
+    ('110302', 's3', 'export_completed', {'bytes_sent': 999999}, {}, False),
+    ('110302', 's3', 'export_completed', {'bytes_sent': 1000000}, {'bytes_sent': '1000000'}, True),
+    ('110302', 's3', 'export_completed', {}, {'bytes_sent': '1000000'}, False),
+    ('110302', 's3', 'export_completed', {}, {'destination_approved': 'yes'}, False),
+    ('110302', 's3', 'export_completed', {'bytes_sent': '5000000'}, {}, False),
+])
+def test_actionable_rule_requires_eligible_source_and_matching_alert_fields(
+        tmp_path, monkeypatch, rule, scenario, action, source_changes, alert_changes, eligible):
+    manifest, rows = evidence_bundle(tmp_path, scenario)
+    unit_packet_verifier(monkeypatch, rows)
+    source_path = tmp_path / 'app.jsonl'
+    events = [json.loads(line) for line in source_path.read_text().splitlines()]
+    trigger = next(e for e in reversed(events) if e['action'] == action)
+    trigger.update(source_changes)
+    source_path.write_text(''.join(json.dumps(e) + '\n' for e in events))
+    alert = {'data': trigger | alert_changes, 'rule': {'id': rule},
+             'timestamp': trigger['event_time'], 'agent': {'name': 'hospital-win'}}
+    (tmp_path / 'alerts.jsonl').write_text(json.dumps(alert) + '\n')
+    metrics = evaluate_run(manifest, tmp_path)
+    assert metrics['observed_rules'] == ([rule] if eligible else [])
+    assert metrics['alert_latencies_s'] == ([0.0] if eligible else [])
+    assert ('Actionable alert does not reconcile with its source event' in metrics['issues']) != eligible
+
+
 def test_actionable_alert_with_wrong_agent_name_is_rejected(tmp_path, monkeypatch):
     manifest, rows = evidence_bundle(tmp_path, scenario='s2')
     unit_packet_verifier(monkeypatch, rows)
@@ -463,6 +520,17 @@ def test_baseline_multi_pair_laboratory_orders_and_results_bind_successfully(tmp
     result = evaluate_run(manifest, tmp_path)
     assert result['status'] == 'complete', result
     assert result['issues'] == []
+
+
+def test_lab_result_request_cannot_precede_order_response(tmp_path, monkeypatch):
+    manifest, rows = evidence_bundle(tmp_path)
+    unit_packet_verifier(monkeypatch, rows)
+    order = next(r for r in manifest['receipts'] if r['path'] == '/api/lab/orders')
+    result = next(r for r in manifest['receipts'] if r['path'] == '/api/lab/results')
+    order['ended_at'] = result['ended_at']
+    metrics = evaluate_run(manifest, tmp_path)
+    assert metrics['status'] == 'incomplete'
+    assert 'Laboratory result does not reconcile with its preceding planned order' in metrics['issues']
 
 
 def test_baseline_lab_result_missing_order_id_in_event_fails(tmp_path, monkeypatch):

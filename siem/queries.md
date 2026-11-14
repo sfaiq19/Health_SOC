@@ -1,8 +1,21 @@
 # Healthcare SOC searches
 
-Status: query definitions prepared; execution/results/screenshots pending the Wazuh lab.
+Status: `Q1–Q6` executed on the measured lab (`measured-20261113/query-results/`). Counts and raw matches are audited in `report/evidence-index.md`. On 14 November 2026, explicit UTC-bounded live re-exports of `Q2_s1_1` (`7/7` auth events: `6` `login_failure`, `1` `login_success`) and `Q3_s1_1` (`30/30` unassigned reads across `30` distinct patients `P0100..P0129`) for `06-s1-1` (`run_id`: `e4570e23-7c0a-4490-9861-b9f29405b9c3`, `gte: "2026-11-13T21:10:24.110Z"`, `lte: "2026-11-13T21:13:42.151Z"`) were executed against `wazuh-archives-*` and reconciled with `0` mismatches under `%USERPROFILE%\HealthcareSOCLab\evidence\live-revalidation-20261114\query-results\` while preserving the historical November 13 exports. `Q5` totals cover six selected runs and eleven receiver objects. Final dashboard screenshots verify eight panels; source generation includes the observed compatibility fixes.
 
-Use Lucene query mode in Discover, not Wazuh API WQL. Replace `<RUN_ID>` with the actual opaque UUID and set the exact UTC interval. Check field mappings before aggregating. Archive fields below are proposed `data.*` fields verified against the application's schema, not yet observed in a live index.
+When running `Q1–Q6` via OpenSearch `_search`, pair the `query_string` filter with an explicit UTC `timestamp` range filter matching the run window (`started_at` through drain deadline `ended_at + 120 s`), and retain those exact `gte`/`lte` bounds in the saved `meta` record:
+
+```json
+{
+  "query": {
+    "bool": {
+      "must": [{"query_string": {"query": "data.run_id:\"<RUN_ID>\" AND data.action:(\"login_failure\" OR \"login_success\")"}}],
+      "filter": [{"range": {"timestamp": {"gte": "<START_UTC>", "lte": "<END_PLUS_120S_UTC>"}}}]
+    }
+  }
+}
+```
+
+Use Lucene query mode in Discover, not Wazuh API WQL. Replace `<RUN_ID>` with the actual opaque UUID and set the exact UTC interval. Check field mappings before aggregating (required before indexing on any rebuild).
 
 | Query | Data view | Filter | Required output |
 |---|---|---|---|

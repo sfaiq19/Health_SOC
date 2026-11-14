@@ -1,5 +1,7 @@
-# Final report status
+# Healthcare SOC technical report
 
-The final technical report is pending actual Wazuh/packet evidence, native dashboard import and group rebuild verification. No DOCX with invented screenshots or measured success rates has been generated.
+Healthcare_SOC_Report.docx presents the measured campaign, architecture, protocol stack, three attack procedures, representative captured frame references, detection/query results, actual health-panel images, mitigations and limitations. scripts/build-report.py regenerates it from the private evidence directory using the bundled document Python runtime.
 
-Assemble after live evaluation: objective and brief interpretation; architecture/protocols; normal workflows; three bounded attack procedures and ground truth; packet analysis; SIEM configuration/rules and executed queries; dashboard; per-run outcomes including failed attempts; mitigations/recovery; limitations; contributions; reproduction appendix and references. Render and inspect every DOCX page before submission. Local validation artifacts can support implementation claims only.
+evidence-index.md maps run IDs, windows, hashes and verification scope. evidence-verification.json contains the independent offline audit, including exact-packet replay differences, timing qualifications, supplemental screenshot hashes and observed recovery bounds.
+
+Use docs/task9-signoff.md to record author/group contribution names and rehearsal notes if needed for submission; separate teammate clean-VM retesting is waived per project scope decision. Report rendering status and QA are recorded in docs/local-validation.md.

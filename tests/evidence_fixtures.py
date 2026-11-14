@@ -28,11 +28,13 @@ def evidence_bundle(root, scenario='baseline'):
 
     def record(op):
         nonlocal last_order_id
+        # The result request uses the order ID returned by the preceding response.
+        at = op['at'] + (0.05 if op['action'] == 'lab_result_created' else 0)
         request_id = str(uuid4())
         event = {'run_id': identity, 'event_id': str(uuid4()), 'request_id': request_id,
                  'service': 'hospital-lab', 'action': op['action'], 'outcome': 'denied' if op['status'] == 401 else 'success',
                  'actor_id': op['actor'], 'actor_key': op['actor'] + '|10.77.0.10', 'http_status': op['status'],
-                 'event_time': iso(op['at'] + .01), **op['details']}
+                 'event_time': iso(at + .01), **op['details']}
         result = {}
         if op['action'] == 'lab_order_created':
             last_order_id = str(uuid4())
@@ -52,8 +54,8 @@ def evidence_bundle(root, scenario='baseline'):
         events.append(event)
         manifest['receipts'].append({'request_id': request_id, 'response_request_id': request_id,
             'method': op['method'], 'path': op['path'], 'actor': op['actor'], 'status': op['status'],
-            'started_at': iso(op['at']), 'ended_at': iso(op['at'] + .05), 'result': result})
-        rows.append({'frame.number': str(len(rows) + 1), 'frame.time_epoch': str((start + timedelta(seconds=op['at'])).timestamp()),
+            'started_at': iso(at), 'ended_at': iso(at + .05), 'result': result})
+        rows.append({'frame.number': str(len(rows) + 1), 'frame.time_epoch': str((start + timedelta(seconds=at)).timestamp()),
             'ip.src': '10.77.0.10', 'ip.dst': '10.77.0.1', 'http.request.method': op['method'],
             'http.request.uri': op['path'], 'http.request.line': f'X-Lab-Run-ID: {identity}'})
     for op in intent['operations']:
@@ -96,7 +98,39 @@ def evidence_bundle(root, scenario='baseline'):
     (root / 'healthcare_rules.xml').write_bytes(rules)
     cases = [{'case': 'loaded-revision', 'expected_rules': ['110001'], 'observed_rules': ['110001'], 'passed': True, 'revision_verified': True}]
     cases += [{'case': name, 'expected_rules': expected, 'observed_rules': expected, 'passed': True} for name, _, expected in driver.cases()]
-    (root / 'native-rule-tests.json').write_text(json.dumps({'validation_schema': 2, 'engine': 'wazuh-logtest',
+    for case in cases:
+        name = case['case']
+        blocks, ids, times = [], [], []
+        for index, rule in enumerate(case['expected_rules']):
+            if name.endswith('-expiry'):
+                action = {'auth-expiry': 'login_failure', 'reads-expiry': 'record_read',
+                          'writes-expiry': 'document_update'}[name]
+                identity = str(uuid4())
+                stamp = iso(65 if index == len(case['expected_rules']) - 1 else 0)
+                source = {'service': 'hospital-lab', 'action': action,
+                          'outcome': 'denied' if action == 'login_failure' else 'success',
+                          'event_id': identity, 'actor_key': 'synthetic-fixture|10.77.0.10'}
+                reply = {'error': 0, 'data': {'codemsg': 0, 'token': 'synthetic-' + name,
+                         'output': {'timestamp': stamp, 'full_log': json.dumps(source),
+                                    'data': source.copy(), 'rule': {'id': rule}}}}
+                blocks.append('2000-01-01 00:00:00,000 wazuh_logtest[DEBUG] Reply: ' + json.dumps(reply) + '\n')
+                ids.append(identity)
+                times.append(stamp)
+            blocks.append("**Phase 1: Completed pre-decoding.\n")
+            if name.endswith('-expiry'):
+                blocks.append(f"    full event: '{json.dumps(source)}'\n")
+            blocks.append("**Phase 2: Completed decoding.\n"
+                          "**Phase 3: Completed filtering (rules).\n"
+                          f"    id: '{rule}'\n")
+            if name == 'loaded-revision':
+                blocks.append(f"    description: '[hc-rev:{driver.rule_revision(rules.decode())}]'\n")
+        transcript = ''.join(blocks).encode()
+        (root / f'{name}.txt').write_bytes(transcript)
+        case['transcript_sha256'] = sha256(transcript).hexdigest()
+        if ids:
+            case.update(event_ids=ids, engine_times=times,
+                        session_sha256=sha256(('synthetic-' + name).encode()).hexdigest())
+    (root / 'native-rule-tests.json').write_text(json.dumps({'validation_schema': 3, 'engine': 'wazuh-logtest',
         'success': True, 'rules_sha256': sha256(rules).hexdigest(), 'cases': cases,
         'loaded_revision': driver.rule_revision(rules.decode()), 'version': 'synthetic fixture Wazuh 4.14.0',
         'rules_path': '/var/ossec/etc/rules/healthcare_rules.xml',

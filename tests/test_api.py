@@ -8,9 +8,11 @@ from hospital_soc.app import create_app
 
 
 def test_seed_and_health_have_real_state(lab, headers):
+    from datetime import datetime
     response = lab.client.get('/health', headers=headers())
     assert response.status_code == 200
     assert response.json['status'] == 'ok'
+    assert datetime.fromisoformat(response.json['server_time']).tzinfo is not None
     with sqlite3.connect(lab.cfg.root / 'hospital.sqlite') as db:
         assert db.execute('select count(*) from patients').fetchone()[0] == 200
         assert db.execute('select count(*) from devices').fetchone()[0] == 10

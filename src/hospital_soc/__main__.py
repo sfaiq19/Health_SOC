@@ -33,7 +33,8 @@ def main():
     serve.add_argument('--policy', choices=['observe', 'enforce'])
     serve.add_argument('--host', default=None)
     serve.add_argument('--port', type=int)
-    sub.add_parser('restore')
+    restore = sub.add_parser('restore')
+    restore.add_argument('--receipt', type=Path)
     baseline = sub.add_parser('baseline')
     baseline.add_argument('--minutes', type=float, default=30)
     baseline.add_argument('--seed', type=int, default=101)
@@ -59,7 +60,19 @@ def main():
         print(json.dumps(seed_lab(cfg, args.seed)))
     elif args.command == 'restore':
         from .documents import restore_documents
-        print(json.dumps(restore_documents(cfg, json.loads((cfg.root / 'seed-manifest.json').read_text()))))
+        if args.receipt and args.receipt.exists():
+            print(json.dumps({'error': f'Refusing to overwrite existing receipt: {args.receipt}'}))
+            return 2
+        receipt = restore_documents(cfg, json.loads((cfg.root / 'seed-manifest.json').read_text()))
+        if args.receipt:
+            args.receipt.parent.mkdir(parents=True, exist_ok=True)
+            receipt['receipt_path'] = str(args.receipt)
+            fd = os.open(args.receipt, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+            try:
+                os.write(fd, (json.dumps(receipt, indent=2) + '\n').encode('utf-8'))
+            finally:
+                os.close(fd)
+        print(json.dumps(receipt))
     elif args.command == 'serve':
         from dataclasses import replace
         from .app import create_app

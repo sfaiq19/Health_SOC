@@ -5,11 +5,11 @@
     <description>Synthetic hospital application event</description>
   </rule>
   <rule id="110001" level="1">
-    <if_sid>110000</if_sid><field name="action">^login_failure$</field>
-    <description>Hospital authentication failure [hc-rev:02e13c9ec9dd060240416876256012b71fba0e0e4423c96995cac98e38621635]</description><group>hc_auth_failure,</group>
+    <if_sid>110000</if_sid><action type="osregex">^login_failure$</action>
+    <description>Hospital authentication failure [hc-rev:db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7]</description><group>hc_auth_failure,</group>
   </rule>
   <rule id="110002" level="1">
-    <if_sid>110000</if_sid><field name="action">^record_read$</field><field name="outcome">^success$</field>
+    <if_sid>110000</if_sid><action type="osregex">^record_read$</action><field name="outcome">^success$</field>
     <description>Hospital record read</description><group>hc_record_read,</group>
   </rule>
   <rule id="110102" level="8">
@@ -17,11 +17,11 @@
     <description>Hospital record accessed outside care assignment</description><group>hc_record_read,</group>
   </rule>
   <rule id="110003" level="1">
-    <if_sid>110000</if_sid><field name="action">^document_update$</field><field name="outcome">^success$</field>
+    <if_sid>110000</if_sid><action type="osregex">^document_update$</action><field name="outcome">^success$</field>
     <description>Hospital document updated</description><group>hc_document_update,</group>
   </rule>
   <rule id="110004" level="1">
-    <if_sid>110000</if_sid><field name="action">^export_completed$</field><field name="outcome">^success$</field>
+    <if_sid>110000</if_sid><action type="osregex">^export_completed$</action><field name="outcome">^success$</field>
     <description>Hospital export completed</description><group>hc_export_success,</group>
   </rule>
   <rule id="110301" level="8">

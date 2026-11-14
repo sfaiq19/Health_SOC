@@ -16,7 +16,12 @@ def test_document_update_changes_real_file_and_reset_restores_it(lab, headers, l
     assert path.read_bytes() != original
     assert response.json['sha256_after'] == sha256(path.read_bytes()).hexdigest()
     manifest = json.loads((lab.cfg.root / 'seed-manifest.json').read_text())
-    assert restore_documents(lab.cfg, manifest)['verified'] is True
+    receipt = restore_documents(lab.cfg, manifest)
+    assert receipt['verified'] is True
+    assert receipt['restored'] == 50
+    assert receipt['seed'] == manifest['seed']
+    assert 'restored_at' in receipt and receipt['restored_at'].endswith('+00:00')
+    assert receipt['hashes'] == manifest['documents']
     assert path.read_bytes() == original
 
 

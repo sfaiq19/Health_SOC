@@ -4,6 +4,7 @@ set -euo pipefail
 run_dir=$1
 [[ -f "$run_dir/traffic.pcapng" ]] || { echo 'Missing capture' >&2; exit 2; }
 [[ ! -e "$run_dir/frames.csv" ]] || { echo 'Refusing to replace a packet export' >&2; exit 2; }
+tshark --version > "$run_dir/tshark-version.txt"
 tshark -r "$run_dir/traffic.pcapng" \
   -d tcp.port==8080,http -d tcp.port==9080,http -d tcp.port==9081,http \
   -T fields -E header=y -E separator=, -E quote=d \

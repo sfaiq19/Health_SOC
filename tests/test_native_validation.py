@@ -1,5 +1,6 @@
 """Wrapper/provenance tests; none of these simulate successful native acceptance."""
 import importlib.util
+import json
 from pathlib import Path
 
 import pytest
@@ -32,6 +33,20 @@ def test_transcript_rejects_early_false_positive_and_missing_results():
     assert module.check_transcript(transcript(['110001', '110001']), ['110001', '110001'])['passed'] is True
 
 
+def test_debug_transcript_reads_only_native_phase_lines():
+    prefix = '2026-11-13 12:00:00,123 wazuh_logtest[INFO] '
+    output = ''.join(prefix + line for line in transcript(['110001']).splitlines(keepends=True))
+    assert driver().check_transcript(output, ['110001'])['passed']
+    assert not driver().check_transcript('DEBUG Reply: ' + repr(output), ['110001'])['passed']
+
+
+@pytest.mark.parametrize('marker', ['New session was created with token "replacement"',
+                                    '** Wazuh-logtest error when connecting with wazuh-analysisd'])
+def test_nonexpiry_case_rejects_reset_or_processing_error(marker):
+    output = transcript(['110001']) + marker + '\n' + transcript(['110001'])
+    assert not driver().check_transcript(output, ['110001', '110001'])['passed']
+
+
 def test_rules_revision_is_bound_to_content_and_loaded_description():
     module = driver()
     stamped = module.stamp_revision(Path('siem/healthcare_rules.xml').read_text())
@@ -53,7 +68,6 @@ def test_rules_snapshot_cannot_change_during_validation(tmp_path):
 
 
 def test_driver_does_not_certify_old_loaded_revision(tmp_path, monkeypatch):
-    import io
     import subprocess
     import sys
     module = driver()
@@ -67,20 +81,54 @@ def test_driver_does_not_certify_old_loaded_revision(tmp_path, monkeypatch):
     (root / 'etc/ossec.conf').write_text('<ossec_config><ruleset><rule_dir>etc/rules</rule_dir></ruleset></ossec_config>')
     class OldEngine:
         def __init__(self, *args, **kwargs):
-            self.stdin = io.StringIO()
-            self.stdout = io.StringIO(transcript(['110001'], 'old loaded revision'))
-        def wait(self, **kwargs):
-            return 0
+            self.returncode = 0
+        def communicate(self, *args, **kwargs):
+            return transcript(['110001'], 'old loaded revision'), None
     monkeypatch.setattr(module.subprocess, 'Popen', OldEngine)
     monkeypatch.setattr(module.subprocess, 'run', lambda *a, **k: subprocess.CompletedProcess(a, 0, 'Wazuh v4.14.0', ''))
     monkeypatch.setattr(module.time, 'sleep', lambda *a: None)
     output = tmp_path / 'proof'
     monkeypatch.setattr(sys, 'argv', ['driver', '--output', str(output), '--executable', str(executable), '--rules', str(rules)])
     assert module.main() == 2
-    import json
     proof = json.loads((output / 'native-rule-tests.json').read_text())
     assert proof['success'] is False
     assert proof['cases'][0]['revision_verified'] is False
+    with pytest.raises(SystemExit, match='fresh validation directory'):
+        module.main()
+
+
+@pytest.mark.parametrize('corrupt_ack', [False, True])
+def test_expiry_pause_follows_matching_engine_reply(monkeypatch, corrupt_ack):
+    """Exercise the real pipe/reader with a CLI fixture; never build a native proof."""
+    import subprocess
+    import sys
+    module = driver()
+    engine = r"""
+import json, sys
+for line in sys.stdin:
+    source = json.loads(line)
+    seen = source.copy()
+    if sys.argv[1] == 'True':
+        seen['event_id'] = 'not-the-input'
+    packet = {'error': 0, 'data': {'codemsg': 0, 'output': {'full_log': line, 'data': seen}}}
+    print('2026-11-13 00:00:00,000 wazuh_logtest[DEBUG] Reply: ' + json.dumps(packet), flush=True)
+"""
+    start = subprocess.Popen
+    monkeypatch.setattr(module.subprocess, 'Popen', lambda cmd, **kw: start(
+        [sys.executable, '-u', '-c', engine, str(corrupt_ack)], **kw))
+    waits = []
+    monkeypatch.setattr(module.time, 'sleep', waits.append)
+    sequence = [(0, module.event('login_failure')), (65, module.event('login_failure'))]
+    output, code, error = module.run_case(Path('fixture'), sequence, True)
+    assert code == 0
+    if corrupt_ack:
+        assert waits == []
+        assert error and 'acknowledge' in error
+        assert output.count('[DEBUG] Reply:') == 1
+    else:
+        assert waits == [65]
+        assert error is None
+        assert output.count('[DEBUG] Reply:') == 2
 
 
 def test_candidate_outside_effective_ruleset_is_refused(tmp_path):

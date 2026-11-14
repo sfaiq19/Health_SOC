@@ -1,6 +1,8 @@
 # Healthcare SOC Design
 
-**Date:** 22 October 2026. **Status:** proposed design for the requested implementation plan; implementation has not started.
+> **Historical planning snapshot (22 October 2026):** The baseline-status note below preserves the pre-implementation design state; see [docs/implementation-progress.md](../../implementation-progress.md) and [docs/task9-signoff.md](../../task9-signoff.md) for current implementation, verified campaign evidence, and waived teammate VM retesting scope.
+
+**Date:** 22 October 2026. **Original planning status:** proposed design for the requested implementation plan (historical baseline before implementation started).
 
 ## Purpose and assignment interpretation
 
@@ -113,7 +115,7 @@ Dashboard panels must show both benign workload and actionable alerts, including
 
 Core scope includes three scenarios, real HTTP interactions, endpoint FIM, search queries, dashboard, evidence bundles, reproducible setup/reset, role assignment, a final report, and a live demonstration. Exclude full EHR deployment, real patient data, real malware, Internet targets, machine learning, automatic clinical-system isolation, and compliance certification.
 
-Acceptance requires all four simulated domains operating; clean baseline searchable; all three scenarios detected in three measured repetitions; S2 independently corroborated by FIM and hashes; S3 sender/receiver agreement; a held-out benign evaluation; fresh packet evidence; a documented mitigation rerun; and a rebuild/reset performed by another group member. Targets are design acceptance criteria, not measured outcomes.
+Acceptance requires all four simulated domains operating; clean baseline searchable; all three scenarios detected in three measured repetitions; S2 independently corroborated by FIM and hashes; S3 sender/receiver agreement; a held-out benign evaluation; fresh packet evidence; a documented mitigation rerun; and documented clean setup/reset procedures with isolated packaging and reset-receipt verification (separate teammate VM retesting is waived). Targets are design acceptance criteria, not measured outcomes.
 
 Healthcare context informs prioritization: confidentiality of records, integrity of laboratory/documents, and availability of clinical workflows. Mitigation discussion can use the voluntary [HHS healthcare cybersecurity performance goals](https://hhscyber.hhs.gov/cybersecurity-performance-goals.html), especially access control, backups, segmentation, and incident preparation. This does not establish legal compliance in any jurisdiction.
 

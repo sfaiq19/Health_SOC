@@ -1,0 +1,3013 @@
+{
+  "audit_date": "2026-11-14",
+  "historical_audit_phase_note": "Top-level limitations and legacy fields reflect the initial pre-compat-replay / pre-live-revalidation November 13 audit snapshot; resolved compatibility replay and November 14 live revalidation records appear under verdict, packet_replay_resolution, and live_revalidation_20261114.",
+  "scope": "Read-only independent audit of preserved private evidence, plus separately stored Nov 14 Windows tshark 4.6.9 replay and live revalidation records; historical Nov 13 files remain untouched.",
+  "evidence_alias": "PRIVATE_EVIDENCE/measured-20261113",
+  "inventory": {
+    "total_files": 874,
+    "total_bytes": 156586359,
+    "sha_manifest_entries": 860,
+    "sha_manifest_matches": 860,
+    "sha_manifest_mismatches": [],
+    "unlisted_files": [
+      "SHA256SUMS.txt",
+      "screenshots/crop-dashboard-fresh.png",
+      "screenshots/crop-dashboard-stale.png",
+      "screenshots/dashboard-fresh.png",
+      "screenshots/dashboard-stale.png",
+      "screenshots/panel-35-fresh.png",
+      "screenshots/panel-35-stale.png",
+      "screenshots/panel-36-fresh.png",
+      "screenshots/panel-36-stale.png",
+      "screenshots/panel-health-unknown-empty.png",
+      "screenshots/summary-fresh.json",
+      "screenshots/summary-stale.json",
+      "screenshots/vega-unknown-badclock.png",
+      "screenshots/vega-unknown-empty.png"
+    ],
+    "manifest_listed_bytes": 155720509,
+    "manifest_listed_mib": 148.5066499710083,
+    "unlisted_file_independent_sha256": {
+      "SHA256SUMS.txt": "99df7b4c3801712b18c7d851cc066f5995f3fdca43ac8ec0a55b3eebce6da54c",
+      "screenshots/crop-dashboard-fresh.png": "8959dd1afb3e911175bc01decfc62bf339222cb8ea92809dbbe22869992bdf9a",
+      "screenshots/crop-dashboard-stale.png": "de4d6f5cfaf60153b4bf1a1eb6684eddfec01077437e244be1988112ba37dcde",
+      "screenshots/dashboard-fresh.png": "4dbfe1ba42c6301bdc5a7ff3ac053e64ccf1257aa9f29d9428c577409ff418f4",
+      "screenshots/dashboard-stale.png": "a1815a6010ca086de11bb5831ffa479bb4bd6f62182edaffa014c5b86ac73040",
+      "screenshots/panel-35-fresh.png": "10b451227c5fc9526225cffe41036402eefb73efad376e1c82ed93412ed2e776",
+      "screenshots/panel-35-stale.png": "3863d032f00749be0673a8cf5a30f16563907776b1130ac9c1a1e2eb41805faa",
+      "screenshots/panel-36-fresh.png": "337f9558efe9bae5c3ff861edd103462a6e182851a2b6aa835dbe0938716de34",
+      "screenshots/panel-36-stale.png": "3863d032f00749be0673a8cf5a30f16563907776b1130ac9c1a1e2eb41805faa",
+      "screenshots/panel-health-unknown-empty.png": "9b2338b6ef42dd0b0befebe953580d220e0655258c01dfd34b206f99e3464b2c",
+      "screenshots/summary-fresh.json": "b7d678b29b74414388b11caf3073603d1e45a964f8574459c3ebcdfd1ba131a3",
+      "screenshots/summary-stale.json": "940eb4039604e6d05d912e834bd9cacd293a1393a7d9202b230ccc88915fc28c",
+      "screenshots/vega-unknown-badclock.png": "d50bdc48af5ee3589ddff0be7534462995da3def71c046c7b6bd32373a8672df",
+      "screenshots/vega-unknown-empty.png": "fb111db2e4aed8d8933fabd88f5f9a51800cda98bc1dd82f6c53eb2e17a4a191"
+    }
+  },
+  "native_proof": {
+    "schema": 3,
+    "engine_version": "Wazuh v4.14.10 - Wazuh Inc.",
+    "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+    "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+    "rules_revision_recomputed": true,
+    "case_count": 26,
+    "case_names_complete": true,
+    "failed_transcripts": [],
+    "expiry": [
+      {
+        "case": "auth-expiry",
+        "gap_seconds": 65.002,
+        "session_sha256": "21bced53b920575ce0753bfa2346565436d55fd6283851c53d421e8a88d67b56"
+      },
+      {
+        "case": "reads-expiry",
+        "gap_seconds": 65.001,
+        "session_sha256": "a1c33f59c3d20d1cdb1c8c397bbaea567c9538df5a780825f638cd6101d1fe20"
+      },
+      {
+        "case": "writes-expiry",
+        "gap_seconds": 65.001,
+        "session_sha256": "136584b64d8202b1b943d4f3ad823baccc09814010d10854299b66ae70d943de"
+      }
+    ],
+    "independent_expiry_sessions": true,
+    "snapshot_hashes_present": true,
+    "live_snapshot_rechecked": false
+  },
+  "runs": [
+    {
+      "name": "01-soak-15m",
+      "run_id": "4f6116c0-11e3-4275-8d52-337c2b516d0d",
+      "scenario": "baseline",
+      "policy_mode": "observe",
+      "seed": 100,
+      "duration_seconds": 900.004,
+      "receipts": 406,
+      "source_events": 760,
+      "source_unique_ids": 760,
+      "archived_source_events": 760,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {},
+      "receiver_objects": [
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        },
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        },
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        }
+      ],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 760,
+        "archived_source_events": 760,
+        "archive_duplicates": 0,
+        "expected_rules": [],
+        "observed_rules": [],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "4f6116c0-11e3-4275-8d52-337c2b516d0d",
+        "captured_packets": 6937,
+        "alert_latency_summary_s": {
+          "count": 0,
+          "min": null,
+          "max": null
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 760,
+        "archived_source_events": 760,
+        "archive_duplicates": 0,
+        "expected_rules": [],
+        "observed_rules": [],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "4f6116c0-11e3-4275-8d52-337c2b516d0d",
+        "captured_packets": 6937,
+        "alert_latency_summary_s": {
+          "count": 0,
+          "min": null,
+          "max": null
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 760,
+          "archived_source_events": 760,
+          "archive_duplicates": 0,
+          "expected_rules": [],
+          "observed_rules": [],
+          "fim_correlated_files": null,
+          "transfers_verified": null,
+          "run_id": "4f6116c0-11e3-4275-8d52-337c2b516d0d",
+          "captured_packets": 6937,
+          "alert_latency_summary_s": {
+            "count": 0,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 6937,
+      "observations": {
+        "max_clock_offset_ms": 262.84,
+        "max_index_visibility_delay_s": 1.959,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T20:01:08.060951+00:00",
+        "first_measured_run": true
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 136.674844,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": null,
+      "latest_archive_delay_seconds": 1.959,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": null,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "visibility_measurement_note": "Measured from final collection sweep (@timestamp vs event_time) because live poll did not flush before tshark segfault",
+      "receipt_status_counts": {
+        "200": 88,
+        "201": 316,
+        "401": 2
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 6937,
+        "response_uri_diff_rows": 471,
+        "frames_tshark469_sha256": "044dfd997b9f9f0a2ef5dd76c03f64bb2fea601f230335e62a5e057aba226f54",
+        "metrics_replay_sha256": "5f69def58de14854c7fb44b2a24b962aba172f75c2046b9a767e4bc7f93fb77e"
+      }
+    },
+    {
+      "name": "02-calibration-30m",
+      "run_id": "d35d222c-6286-4b21-877a-109a5a96dd2c",
+      "scenario": "baseline",
+      "policy_mode": "observe",
+      "seed": 101,
+      "duration_seconds": 1800.003,
+      "receipts": 804,
+      "source_events": 1505,
+      "source_unique_ids": 1505,
+      "archived_source_events": 1505,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {},
+      "receiver_objects": [
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        },
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        },
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        },
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        },
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        },
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        }
+      ],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 1505,
+        "archived_source_events": 1505,
+        "archive_duplicates": 0,
+        "expected_rules": [],
+        "observed_rules": [],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "d35d222c-6286-4b21-877a-109a5a96dd2c",
+        "captured_packets": 13787,
+        "alert_latency_summary_s": {
+          "count": 0,
+          "min": null,
+          "max": null
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 1505,
+        "archived_source_events": 1505,
+        "archive_duplicates": 0,
+        "expected_rules": [],
+        "observed_rules": [],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "d35d222c-6286-4b21-877a-109a5a96dd2c",
+        "captured_packets": 13787,
+        "alert_latency_summary_s": {
+          "count": 0,
+          "min": null,
+          "max": null
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 1505,
+          "archived_source_events": 1505,
+          "archive_duplicates": 0,
+          "expected_rules": [],
+          "observed_rules": [],
+          "fim_correlated_files": null,
+          "transfers_verified": null,
+          "run_id": "d35d222c-6286-4b21-877a-109a5a96dd2c",
+          "captured_packets": 13787,
+          "alert_latency_summary_s": {
+            "count": 0,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 13787,
+      "observations": {
+        "max_clock_offset_ms": 231.7,
+        "max_index_visibility_delay_s": 13.806,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T20:32:35.946847+00:00",
+        "previous_measured_run_id": "4f6116c0-11e3-4275-8d52-337c2b516d0d",
+        "prior_run_final_manager_at": "2026-11-13T19:58:58.976000+00:00",
+        "quiet_interval_started_at": "2026-11-13T19:58:58.976000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 88.376183,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 185.71,
+      "latest_archive_delay_seconds": 2.122,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 171,
+        "201": 630,
+        "401": 3
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 13787,
+        "response_uri_diff_rows": 932,
+        "frames_tshark469_sha256": "22a06819598ad73ff18be2c0761b9bb366db10b3968b3a3eb50a6b926ee146ad",
+        "metrics_replay_sha256": "b035c378203429c2eb81b8492d637cb31b9ded0a25d6bba98e8bc1e21b2a910e"
+      }
+    },
+    {
+      "name": "03-holdout-1",
+      "run_id": "3266019d-91ee-4c6a-bf9e-3bfb707b820c",
+      "scenario": "baseline",
+      "policy_mode": "observe",
+      "seed": 102,
+      "duration_seconds": 600.002,
+      "receipts": 272,
+      "source_events": 509,
+      "source_unique_ids": 509,
+      "archived_source_events": 509,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {},
+      "receiver_objects": [
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        },
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        }
+      ],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 509,
+        "archived_source_events": 509,
+        "archive_duplicates": 0,
+        "expected_rules": [],
+        "observed_rules": [],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "3266019d-91ee-4c6a-bf9e-3bfb707b820c",
+        "captured_packets": 4156,
+        "alert_latency_summary_s": {
+          "count": 0,
+          "min": null,
+          "max": null
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 509,
+        "archived_source_events": 509,
+        "archive_duplicates": 0,
+        "expected_rules": [],
+        "observed_rules": [],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "3266019d-91ee-4c6a-bf9e-3bfb707b820c",
+        "captured_packets": 4156,
+        "alert_latency_summary_s": {
+          "count": 0,
+          "min": null,
+          "max": null
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 509,
+          "archived_source_events": 509,
+          "archive_duplicates": 0,
+          "expected_rules": [],
+          "observed_rules": [],
+          "fim_correlated_files": null,
+          "transfers_verified": null,
+          "run_id": "3266019d-91ee-4c6a-bf9e-3bfb707b820c",
+          "captured_packets": 4156,
+          "alert_latency_summary_s": {
+            "count": 0,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 4156,
+      "observations": {
+        "max_clock_offset_ms": 247.48,
+        "max_index_visibility_delay_s": 15.326,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T20:44:31.475921+00:00",
+        "previous_measured_run_id": "d35d222c-6286-4b21-877a-109a5a96dd2c",
+        "prior_run_final_manager_at": "2026-11-13T20:31:35.383000+00:00",
+        "quiet_interval_started_at": "2026-11-13T20:31:35.383000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 445.197557,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 144.733,
+      "latest_archive_delay_seconds": 1.974,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 61,
+        "201": 210,
+        "401": 1
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 4156,
+        "response_uri_diff_rows": 274,
+        "frames_tshark469_sha256": "27803e0307aa1b9765ae6f4b55fef0a59de224f10273f78428715d28f70d46a5",
+        "metrics_replay_sha256": "e73142d982ce1a0c42c6744062f6e42c93bbfe2a4369c9945bd22836840958e1"
+      }
+    },
+    {
+      "name": "04-holdout-2",
+      "run_id": "a2d9907c-bc26-4349-b48d-ffc2ea3e61ea",
+      "scenario": "baseline",
+      "policy_mode": "observe",
+      "seed": 103,
+      "duration_seconds": 600.002,
+      "receipts": 272,
+      "source_events": 509,
+      "source_unique_ids": 509,
+      "archived_source_events": 509,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {},
+      "receiver_objects": [
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        },
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        }
+      ],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 509,
+        "archived_source_events": 509,
+        "archive_duplicates": 0,
+        "expected_rules": [],
+        "observed_rules": [],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "a2d9907c-bc26-4349-b48d-ffc2ea3e61ea",
+        "captured_packets": 4299,
+        "alert_latency_summary_s": {
+          "count": 0,
+          "min": null,
+          "max": null
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 509,
+        "archived_source_events": 509,
+        "archive_duplicates": 0,
+        "expected_rules": [],
+        "observed_rules": [],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "a2d9907c-bc26-4349-b48d-ffc2ea3e61ea",
+        "captured_packets": 4299,
+        "alert_latency_summary_s": {
+          "count": 0,
+          "min": null,
+          "max": null
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 509,
+          "archived_source_events": 509,
+          "archive_duplicates": 0,
+          "expected_rules": [],
+          "observed_rules": [],
+          "fim_correlated_files": null,
+          "transfers_verified": null,
+          "run_id": "a2d9907c-bc26-4349-b48d-ffc2ea3e61ea",
+          "captured_packets": 4299,
+          "alert_latency_summary_s": {
+            "count": 0,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 4299,
+      "observations": {
+        "max_clock_offset_ms": 264.25,
+        "max_index_visibility_delay_s": 13.279,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T20:55:34.301798+00:00",
+        "previous_measured_run_id": "3266019d-91ee-4c6a-bf9e-3bfb707b820c",
+        "prior_run_final_manager_at": "2026-11-13T20:43:46.611000+00:00",
+        "quiet_interval_started_at": "2026-11-13T20:43:46.611000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 770.11132,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 76.331,
+      "latest_archive_delay_seconds": 2.062,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 61,
+        "201": 210,
+        "401": 1
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 4299,
+        "response_uri_diff_rows": 274,
+        "frames_tshark469_sha256": "c7e35c24b1f092681b31b5483eec9ec65e32a8d323d978fc52c1bca99a95abb8",
+        "metrics_replay_sha256": "1fd150c0f7f8851437909789ae91dea3693fec24c5e837b1966d347a2f1c55f6"
+      }
+    },
+    {
+      "name": "05-holdout-3",
+      "run_id": "f747ab41-5eb4-4681-997a-af4e3cd4add7",
+      "scenario": "baseline",
+      "policy_mode": "observe",
+      "seed": 104,
+      "duration_seconds": 600.001,
+      "receipts": 272,
+      "source_events": 509,
+      "source_unique_ids": 509,
+      "archived_source_events": 509,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {},
+      "receiver_objects": [
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        },
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        }
+      ],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 509,
+        "archived_source_events": 509,
+        "archive_duplicates": 0,
+        "expected_rules": [],
+        "observed_rules": [],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "f747ab41-5eb4-4681-997a-af4e3cd4add7",
+        "captured_packets": 4151,
+        "alert_latency_summary_s": {
+          "count": 0,
+          "min": null,
+          "max": null
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 509,
+        "archived_source_events": 509,
+        "archive_duplicates": 0,
+        "expected_rules": [],
+        "observed_rules": [],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "f747ab41-5eb4-4681-997a-af4e3cd4add7",
+        "captured_packets": 4151,
+        "alert_latency_summary_s": {
+          "count": 0,
+          "min": null,
+          "max": null
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 509,
+          "archived_source_events": 509,
+          "archive_duplicates": 0,
+          "expected_rules": [],
+          "observed_rules": [],
+          "fim_correlated_files": null,
+          "transfers_verified": null,
+          "run_id": "f747ab41-5eb4-4681-997a-af4e3cd4add7",
+          "captured_packets": 4151,
+          "alert_latency_summary_s": {
+            "count": 0,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 4151,
+      "observations": {
+        "max_clock_offset_ms": 281.67,
+        "max_index_visibility_delay_s": 19.84,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T21:06:37.288961+00:00",
+        "previous_measured_run_id": "a2d9907c-bc26-4349-b48d-ffc2ea3e61ea",
+        "prior_run_final_manager_at": "2026-11-13T20:54:49.750000+00:00",
+        "quiet_interval_started_at": "2026-11-13T20:54:49.750000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 111.764942,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 76.319,
+      "latest_archive_delay_seconds": 2.059,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 61,
+        "201": 210,
+        "401": 1
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 4151,
+        "response_uri_diff_rows": 274,
+        "frames_tshark469_sha256": "d6c882eb0caf69462079599fa6804ab646ff903ebdea5d2377f5a72259b114eb",
+        "metrics_replay_sha256": "6b75ebafcfa2b4a66c2143905a71a95c3e4909b0c5411ac6b068f1db5a8fefe8"
+      }
+    },
+    {
+      "name": "06-s1-1",
+      "run_id": "e4570e23-7c0a-4490-9861-b9f29405b9c3",
+      "scenario": "s1",
+      "policy_mode": "observe",
+      "seed": 201,
+      "duration_seconds": 78.041,
+      "receipts": 38,
+      "source_events": 39,
+      "source_unique_ids": 39,
+      "archived_source_events": 39,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {
+        "110101": 1,
+        "110102": 29,
+        "110103": 1
+      },
+      "receiver_objects": [],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 39,
+        "archived_source_events": 39,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "observed_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "e4570e23-7c0a-4490-9861-b9f29405b9c3",
+        "captured_packets": 470,
+        "alert_latency_summary_s": {
+          "count": 31,
+          "min": 0.207,
+          "max": 1.895
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 39,
+        "archived_source_events": 39,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "observed_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "e4570e23-7c0a-4490-9861-b9f29405b9c3",
+        "captured_packets": 470,
+        "alert_latency_summary_s": {
+          "count": 31,
+          "min": 0.207,
+          "max": 1.895
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 39,
+          "archived_source_events": 39,
+          "archive_duplicates": 0,
+          "expected_rules": [
+            "110101",
+            "110102",
+            "110103"
+          ],
+          "observed_rules": [
+            "110101",
+            "110102",
+            "110103"
+          ],
+          "fim_correlated_files": null,
+          "transfers_verified": null,
+          "run_id": "e4570e23-7c0a-4490-9861-b9f29405b9c3",
+          "captured_packets": 470,
+          "alert_latency_summary_s": {
+            "count": 31,
+            "min": 0.207,
+            "max": 1.895
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 470,
+      "observations": {
+        "max_clock_offset_ms": 269.42,
+        "max_index_visibility_delay_s": 10.914,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T21:12:12.513766+00:00",
+        "previous_measured_run_id": "f747ab41-5eb4-4681-997a-af4e3cd4add7",
+        "prior_run_final_manager_at": "2026-11-13T21:05:51.542000+00:00",
+        "quiet_interval_started_at": "2026-11-13T21:05:51.542000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 589.915613,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 272.568,
+      "latest_archive_delay_seconds": 1.914,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 32,
+        "401": 6
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 470,
+        "response_uri_diff_rows": 38,
+        "frames_tshark469_sha256": "1ff2102753037eb0709584a0a50a556423fdfe7006520aca61f5731719a13553",
+        "metrics_replay_sha256": "f36da6e5afadc0eacb13a767a255b5f9011c14d39bd73e20035f4ad6a38f1570"
+      }
+    },
+    {
+      "name": "07-s1-2",
+      "run_id": "4d4c8d67-e3e0-4a0b-be5e-43a766b0a0b7",
+      "scenario": "s1",
+      "policy_mode": "observe",
+      "seed": 202,
+      "duration_seconds": 78.148,
+      "receipts": 38,
+      "source_events": 39,
+      "source_unique_ids": 39,
+      "archived_source_events": 39,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {
+        "110101": 1,
+        "110102": 29,
+        "110103": 1
+      },
+      "receiver_objects": [],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 39,
+        "archived_source_events": 39,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "observed_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "4d4c8d67-e3e0-4a0b-be5e-43a766b0a0b7",
+        "captured_packets": 472,
+        "alert_latency_summary_s": {
+          "count": 31,
+          "min": 0.139,
+          "max": 1.951
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 39,
+        "archived_source_events": 39,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "observed_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "4d4c8d67-e3e0-4a0b-be5e-43a766b0a0b7",
+        "captured_packets": 472,
+        "alert_latency_summary_s": {
+          "count": 31,
+          "min": 0.139,
+          "max": 1.951
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 39,
+          "archived_source_events": 39,
+          "archive_duplicates": 0,
+          "expected_rules": [
+            "110101",
+            "110102",
+            "110103"
+          ],
+          "observed_rules": [
+            "110101",
+            "110102",
+            "110103"
+          ],
+          "fim_correlated_files": null,
+          "transfers_verified": null,
+          "run_id": "4d4c8d67-e3e0-4a0b-be5e-43a766b0a0b7",
+          "captured_packets": 472,
+          "alert_latency_summary_s": {
+            "count": 31,
+            "min": 0.139,
+            "max": 1.951
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 472,
+      "observations": {
+        "max_clock_offset_ms": 322.33,
+        "max_index_visibility_delay_s": 10.592,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T21:14:47.066242+00:00",
+        "previous_measured_run_id": "e4570e23-7c0a-4490-9861-b9f29405b9c3",
+        "prior_run_final_manager_at": "2026-11-13T21:11:40.824000+00:00",
+        "quiet_interval_started_at": "2026-11-13T21:11:40.824000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 441.470221,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 76.323,
+      "latest_archive_delay_seconds": 1.951,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 32,
+        "401": 6
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 472,
+        "response_uri_diff_rows": 38,
+        "frames_tshark469_sha256": "434904e2cc6965609b7b04c521757b0b2f607633560e514cd0a0aaae26cc8634",
+        "metrics_replay_sha256": "25367884905df229a3a0ed9362d3046705b3cb20d881f8cd06eba4a1f0d51c76"
+      }
+    },
+    {
+      "name": "08-s1-3",
+      "run_id": "6c4349c8-3cc1-4fc2-805f-7f81720804d9",
+      "scenario": "s1",
+      "policy_mode": "observe",
+      "seed": 203,
+      "duration_seconds": 77.882,
+      "receipts": 38,
+      "source_events": 39,
+      "source_unique_ids": 39,
+      "archived_source_events": 39,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {
+        "110101": 1,
+        "110102": 29,
+        "110103": 1
+      },
+      "receiver_objects": [],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 39,
+        "archived_source_events": 39,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "observed_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "6c4349c8-3cc1-4fc2-805f-7f81720804d9",
+        "captured_packets": 470,
+        "alert_latency_summary_s": {
+          "count": 31,
+          "min": 0.119,
+          "max": 1.759
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 39,
+        "archived_source_events": 39,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "observed_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "6c4349c8-3cc1-4fc2-805f-7f81720804d9",
+        "captured_packets": 470,
+        "alert_latency_summary_s": {
+          "count": 31,
+          "min": 0.119,
+          "max": 1.759
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 39,
+          "archived_source_events": 39,
+          "archive_duplicates": 0,
+          "expected_rules": [
+            "110101",
+            "110102",
+            "110103"
+          ],
+          "observed_rules": [
+            "110101",
+            "110102",
+            "110103"
+          ],
+          "fim_correlated_files": null,
+          "transfers_verified": null,
+          "run_id": "6c4349c8-3cc1-4fc2-805f-7f81720804d9",
+          "captured_packets": 470,
+          "alert_latency_summary_s": {
+            "count": 31,
+            "min": 0.119,
+            "max": 1.759
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 470,
+      "observations": {
+        "max_clock_offset_ms": 303.3,
+        "max_index_visibility_delay_s": 10.962,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T21:17:20.360614+00:00",
+        "previous_measured_run_id": "4d4c8d67-e3e0-4a0b-be5e-43a766b0a0b7",
+        "prior_run_final_manager_at": "2026-11-13T21:14:15.665000+00:00",
+        "quiet_interval_started_at": "2026-11-13T21:14:15.665000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 291.662619,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 76.296,
+      "latest_archive_delay_seconds": 1.783,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 32,
+        "401": 6
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 470,
+        "response_uri_diff_rows": 38,
+        "frames_tshark469_sha256": "9b5cab933c4e547d29d7f85df0adc910c9014250b87bcacb2351f86220b87f15",
+        "metrics_replay_sha256": "2c8120a5e1b79d6b52642a377244e2de7b19cdc1fe29eb9e84500b9d511300cf"
+      }
+    },
+    {
+      "name": "09-s3-1",
+      "run_id": "d62b2c3d-f8c5-4987-b33f-d57636e924ac",
+      "scenario": "s3",
+      "policy_mode": "observe",
+      "seed": 201,
+      "duration_seconds": 0.482,
+      "receipts": 3,
+      "source_events": 5,
+      "source_unique_ids": 5,
+      "archived_source_events": 5,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {
+        "110302": 1
+      },
+      "receiver_objects": [
+        {
+          "bytes": 5000000,
+          "sha256": "bc392c58028cab64a0d59a18719ecae72216fc9cd5f3bcdb7c1362505583b5dd",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        }
+      ],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 5,
+        "archived_source_events": 5,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110302"
+        ],
+        "observed_rules": [
+          "110302"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": 1,
+        "run_id": "d62b2c3d-f8c5-4987-b33f-d57636e924ac",
+        "captured_packets": 3654,
+        "alert_latency_summary_s": {
+          "count": 1,
+          "min": 1.596,
+          "max": 1.596
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 5,
+        "archived_source_events": 5,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110302"
+        ],
+        "observed_rules": [
+          "110302"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": 1,
+        "run_id": "d62b2c3d-f8c5-4987-b33f-d57636e924ac",
+        "captured_packets": 3654,
+        "alert_latency_summary_s": {
+          "count": 1,
+          "min": 1.596,
+          "max": 1.596
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 5,
+          "archived_source_events": 5,
+          "archive_duplicates": 0,
+          "expected_rules": [
+            "110302"
+          ],
+          "observed_rules": [
+            "110302"
+          ],
+          "fim_correlated_files": null,
+          "transfers_verified": 1,
+          "run_id": "d62b2c3d-f8c5-4987-b33f-d57636e924ac",
+          "captured_packets": 3654,
+          "alert_latency_summary_s": {
+            "count": 1,
+            "min": 1.596,
+            "max": 1.596
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 3654,
+      "observations": {
+        "max_clock_offset_ms": 284.58,
+        "max_index_visibility_delay_s": 11.9,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T21:18:36.679704+00:00",
+        "previous_measured_run_id": "6c4349c8-3cc1-4fc2-805f-7f81720804d9",
+        "prior_run_final_manager_at": "2026-11-13T21:16:48.451000+00:00",
+        "quiet_interval_started_at": "2026-11-13T21:16:48.451000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 221.069399,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 76.319,
+      "latest_archive_delay_seconds": 1.679,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 3
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 3654,
+        "response_uri_diff_rows": 4,
+        "frames_tshark469_sha256": "5decd0bd34849b99289e4db4bc77859a6334c2c1f36f91411ffec75cf0df2630",
+        "metrics_replay_sha256": "6d7cc11b524afbd9e47a0a03c69d2e2d5b2136d60a96471d0c215f10e321d3d2"
+      }
+    },
+    {
+      "name": "10-s3-2",
+      "run_id": "8316fd35-d5c7-458f-b563-84279eca1555",
+      "scenario": "s3",
+      "policy_mode": "observe",
+      "seed": 202,
+      "duration_seconds": 0.53,
+      "receipts": 3,
+      "source_events": 5,
+      "source_unique_ids": 5,
+      "archived_source_events": 5,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {
+        "110302": 1
+      },
+      "receiver_objects": [
+        {
+          "bytes": 5000000,
+          "sha256": "bc392c58028cab64a0d59a18719ecae72216fc9cd5f3bcdb7c1362505583b5dd",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        }
+      ],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 5,
+        "archived_source_events": 5,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110302"
+        ],
+        "observed_rules": [
+          "110302"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": 1,
+        "run_id": "8316fd35-d5c7-458f-b563-84279eca1555",
+        "captured_packets": 3660,
+        "alert_latency_summary_s": {
+          "count": 1,
+          "min": 1.533,
+          "max": 1.533
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 5,
+        "archived_source_events": 5,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110302"
+        ],
+        "observed_rules": [
+          "110302"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": 1,
+        "run_id": "8316fd35-d5c7-458f-b563-84279eca1555",
+        "captured_packets": 3660,
+        "alert_latency_summary_s": {
+          "count": 1,
+          "min": 1.533,
+          "max": 1.533
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 5,
+          "archived_source_events": 5,
+          "archive_duplicates": 0,
+          "expected_rules": [
+            "110302"
+          ],
+          "observed_rules": [
+            "110302"
+          ],
+          "fim_correlated_files": null,
+          "transfers_verified": 1,
+          "run_id": "8316fd35-d5c7-458f-b563-84279eca1555",
+          "captured_packets": 3660,
+          "alert_latency_summary_s": {
+            "count": 1,
+            "min": 1.533,
+            "max": 1.533
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 3660,
+      "observations": {
+        "max_clock_offset_ms": 286.66,
+        "max_index_visibility_delay_s": 8.887,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T21:19:55.101074+00:00",
+        "previous_measured_run_id": "d62b2c3d-f8c5-4987-b33f-d57636e924ac",
+        "prior_run_final_manager_at": "2026-11-13T21:18:06.836000+00:00",
+        "quiet_interval_started_at": "2026-11-13T21:18:06.836000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 147.315101,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 76.323,
+      "latest_archive_delay_seconds": 1.63,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 3
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 3660,
+        "response_uri_diff_rows": 4,
+        "frames_tshark469_sha256": "d5406b4476b10336a04edb8ada1cf5ac80a9ef0e38e22af17bf56c29167d8377",
+        "metrics_replay_sha256": "d6dec636e066fa9aa5c92576884154ae5a8803cb92e05e3a572663d701f2fa45"
+      }
+    },
+    {
+      "name": "11-s3-3",
+      "run_id": "52f44b82-8fe1-4124-8c92-f8a23a083a8d",
+      "scenario": "s3",
+      "policy_mode": "observe",
+      "seed": 203,
+      "duration_seconds": 0.552,
+      "receipts": 3,
+      "source_events": 5,
+      "source_unique_ids": 5,
+      "archived_source_events": 5,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {
+        "110302": 1
+      },
+      "receiver_objects": [
+        {
+          "bytes": 5000000,
+          "sha256": "bc392c58028cab64a0d59a18719ecae72216fc9cd5f3bcdb7c1362505583b5dd",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        }
+      ],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 5,
+        "archived_source_events": 5,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110302"
+        ],
+        "observed_rules": [
+          "110302"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": 1,
+        "run_id": "52f44b82-8fe1-4124-8c92-f8a23a083a8d",
+        "captured_packets": 3606,
+        "alert_latency_summary_s": {
+          "count": 1,
+          "min": 1.428,
+          "max": 1.428
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 5,
+        "archived_source_events": 5,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110302"
+        ],
+        "observed_rules": [
+          "110302"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": 1,
+        "run_id": "52f44b82-8fe1-4124-8c92-f8a23a083a8d",
+        "captured_packets": 3606,
+        "alert_latency_summary_s": {
+          "count": 1,
+          "min": 1.428,
+          "max": 1.428
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 5,
+          "archived_source_events": 5,
+          "archive_duplicates": 0,
+          "expected_rules": [
+            "110302"
+          ],
+          "observed_rules": [
+            "110302"
+          ],
+          "fim_correlated_files": null,
+          "transfers_verified": 1,
+          "run_id": "52f44b82-8fe1-4124-8c92-f8a23a083a8d",
+          "captured_packets": 3606,
+          "alert_latency_summary_s": {
+            "count": 1,
+            "min": 1.428,
+            "max": 1.428
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 3606,
+      "observations": {
+        "max_clock_offset_ms": 273.48,
+        "max_index_visibility_delay_s": 11.886,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T21:21:13.470015+00:00",
+        "previous_measured_run_id": "8316fd35-d5c7-458f-b563-84279eca1555",
+        "prior_run_final_manager_at": "2026-11-13T21:19:25.213000+00:00",
+        "quiet_interval_started_at": "2026-11-13T21:19:25.213000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 73.603023,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 76.368,
+      "latest_archive_delay_seconds": 1.931,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 3
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 3606,
+        "response_uri_diff_rows": 4,
+        "frames_tshark469_sha256": "bde20de9c8f5ebc772a60441d88b5254361a4e8637443e915fa76526c20b2c07",
+        "metrics_replay_sha256": "3f05e5fae6b27cd6cec254bdd38ce78a6c757ee4544b30ada17fb27ccc62f675"
+      }
+    },
+    {
+      "name": "12-s2-1",
+      "run_id": "723e82b0-d45d-4ede-8586-ee3f017ef817",
+      "scenario": "s2",
+      "policy_mode": "observe",
+      "seed": 201,
+      "duration_seconds": 51.67,
+      "receipts": 54,
+      "source_events": 105,
+      "source_unique_ids": 105,
+      "archived_source_events": 105,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {
+        "110201": 2
+      },
+      "receiver_objects": [],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 105,
+        "archived_source_events": 105,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110201"
+        ],
+        "observed_rules": [
+          "110201"
+        ],
+        "fim_correlated_files": 50,
+        "transfers_verified": null,
+        "run_id": "723e82b0-d45d-4ede-8586-ee3f017ef817",
+        "captured_packets": 758,
+        "alert_latency_summary_s": {
+          "count": 2,
+          "min": 0.297,
+          "max": 1.926
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 105,
+        "archived_source_events": 105,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110201"
+        ],
+        "observed_rules": [
+          "110201"
+        ],
+        "fim_correlated_files": 50,
+        "transfers_verified": null,
+        "run_id": "723e82b0-d45d-4ede-8586-ee3f017ef817",
+        "captured_packets": 758,
+        "alert_latency_summary_s": {
+          "count": 2,
+          "min": 0.297,
+          "max": 1.926
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 105,
+          "archived_source_events": 105,
+          "archive_duplicates": 0,
+          "expected_rules": [
+            "110201"
+          ],
+          "observed_rules": [
+            "110201"
+          ],
+          "fim_correlated_files": 50,
+          "transfers_verified": null,
+          "run_id": "723e82b0-d45d-4ede-8586-ee3f017ef817",
+          "captured_packets": 758,
+          "alert_latency_summary_s": {
+            "count": 2,
+            "min": 0.297,
+            "max": 1.926
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 758,
+      "observations": {
+        "max_clock_offset_ms": 265.24,
+        "max_index_visibility_delay_s": 10.128,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T21:23:44.623715+00:00",
+        "previous_measured_run_id": "52f44b82-8fe1-4124-8c92-f8a23a083a8d",
+        "prior_run_final_manager_at": "2026-11-13T21:20:43.556000+00:00",
+        "quiet_interval_started_at": "2026-11-13T21:20:43.556000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 70.496911,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 98.186,
+      "latest_archive_delay_seconds": 2.011,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "independent_s2_digest_joins": 50,
+      "s2_digest_join_total": 50,
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 54
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 758,
+        "response_uri_diff_rows": 54,
+        "frames_tshark469_sha256": "028e53b9efde62b55ac6691f8fc7c396d71471611731fad1225b791c0241f16b",
+        "metrics_replay_sha256": "ae39a8acaf23c67f19f68f1d0a4462f71bf2d81a1365113909fdc9992e14cc7c"
+      }
+    },
+    {
+      "name": "13-s2-2",
+      "run_id": "a1cdbe21-aa26-4419-a1c0-2dc28899e598",
+      "scenario": "s2",
+      "policy_mode": "observe",
+      "seed": 202,
+      "duration_seconds": 52.399,
+      "receipts": 54,
+      "source_events": 105,
+      "source_unique_ids": 105,
+      "archived_source_events": 105,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {
+        "110201": 2
+      },
+      "receiver_objects": [],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 105,
+        "archived_source_events": 105,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110201"
+        ],
+        "observed_rules": [
+          "110201"
+        ],
+        "fim_correlated_files": 50,
+        "transfers_verified": null,
+        "run_id": "a1cdbe21-aa26-4419-a1c0-2dc28899e598",
+        "captured_packets": 758,
+        "alert_latency_summary_s": {
+          "count": 2,
+          "min": 0.767,
+          "max": 1.258
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 105,
+        "archived_source_events": 105,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110201"
+        ],
+        "observed_rules": [
+          "110201"
+        ],
+        "fim_correlated_files": 50,
+        "transfers_verified": null,
+        "run_id": "a1cdbe21-aa26-4419-a1c0-2dc28899e598",
+        "captured_packets": 758,
+        "alert_latency_summary_s": {
+          "count": 2,
+          "min": 0.767,
+          "max": 1.258
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 105,
+          "archived_source_events": 105,
+          "archive_duplicates": 0,
+          "expected_rules": [
+            "110201"
+          ],
+          "observed_rules": [
+            "110201"
+          ],
+          "fim_correlated_files": 50,
+          "transfers_verified": null,
+          "run_id": "a1cdbe21-aa26-4419-a1c0-2dc28899e598",
+          "captured_packets": 758,
+          "alert_latency_summary_s": {
+            "count": 2,
+            "min": 0.767,
+            "max": 1.258
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 758,
+      "observations": {
+        "max_clock_offset_ms": 277.6,
+        "max_index_visibility_delay_s": 9.476,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T21:28:40.579264+00:00",
+        "previous_measured_run_id": "723e82b0-d45d-4ede-8586-ee3f017ef817",
+        "prior_run_final_manager_at": "2026-11-13T21:23:14.066000+00:00",
+        "quiet_interval_started_at": "2026-11-13T21:23:14.066000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 62.852538,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 243.563,
+      "latest_archive_delay_seconds": 1.987,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "independent_s2_digest_joins": 50,
+      "s2_digest_join_total": 50,
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 54
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 758,
+        "response_uri_diff_rows": 54,
+        "frames_tshark469_sha256": "3a0c104834f9545c5229586768c61a284c5ae4a8f35225bf3ed87b60667b0b9e",
+        "metrics_replay_sha256": "4bda713bc7b0f957486838a7743d5dd95f0de3ac4ad05b45c69206ad4e84d812"
+      }
+    },
+    {
+      "name": "14-s2-3",
+      "run_id": "416054dc-5b21-424e-ba00-0b69dff1b09c",
+      "scenario": "s2",
+      "policy_mode": "observe",
+      "seed": 203,
+      "duration_seconds": 52.43,
+      "receipts": 54,
+      "source_events": 105,
+      "source_unique_ids": 105,
+      "archived_source_events": 105,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {
+        "110201": 2
+      },
+      "receiver_objects": [],
+      "saved_metrics": {
+        "status": "complete",
+        "missing_evidence": [],
+        "issues": [],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 105,
+        "archived_source_events": 105,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110201"
+        ],
+        "observed_rules": [
+          "110201"
+        ],
+        "fim_correlated_files": 50,
+        "transfers_verified": null,
+        "run_id": "416054dc-5b21-424e-ba00-0b69dff1b09c",
+        "captured_packets": 760,
+        "alert_latency_summary_s": {
+          "count": 2,
+          "min": 0.217,
+          "max": 0.739
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture"
+        ],
+        "attack_detection_passed": true,
+        "collection_coverage": 1.0,
+        "source_events": 105,
+        "archived_source_events": 105,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110201"
+        ],
+        "observed_rules": [
+          "110201"
+        ],
+        "fim_correlated_files": 50,
+        "transfers_verified": null,
+        "run_id": "416054dc-5b21-424e-ba00-0b69dff1b09c",
+        "captured_packets": 760,
+        "alert_latency_summary_s": {
+          "count": 2,
+          "min": 0.217,
+          "max": 0.739
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "complete",
+          "missing_evidence": [],
+          "issues": [],
+          "attack_detection_passed": true,
+          "collection_coverage": 1.0,
+          "source_events": 105,
+          "archived_source_events": 105,
+          "archive_duplicates": 0,
+          "expected_rules": [
+            "110201"
+          ],
+          "observed_rules": [
+            "110201"
+          ],
+          "fim_correlated_files": 50,
+          "transfers_verified": null,
+          "run_id": "416054dc-5b21-424e-ba00-0b69dff1b09c",
+          "captured_packets": 760,
+          "alert_latency_summary_s": {
+            "count": 2,
+            "min": 0.217,
+            "max": 0.739
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 760,
+      "observations": {
+        "max_clock_offset_ms": 286.82,
+        "max_index_visibility_delay_s": 9.748,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T21:33:40.357552+00:00",
+        "previous_measured_run_id": "a1cdbe21-aa26-4419-a1c0-2dc28899e598",
+        "prior_run_final_manager_at": "2026-11-13T21:28:11.387000+00:00",
+        "quiet_interval_started_at": "2026-11-13T21:28:11.387000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 62.779511,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 246.029,
+      "latest_archive_delay_seconds": 1.981,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "independent_s2_digest_joins": 50,
+      "s2_digest_join_total": 50,
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 54
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "complete",
+        "issues": [],
+        "captured_packets": 760,
+        "response_uri_diff_rows": 54,
+        "frames_tshark469_sha256": "6acad73f71737f8eccd2bea777a507cf2fde4b1b49648783816e667db47ff13d",
+        "metrics_replay_sha256": "f0e6c9b1c7d8dd529d6a60ad32fa51c4bd3cf594eec1dba21dc73363e43ef8a9"
+      }
+    },
+    {
+      "name": "15-s1-enforce",
+      "run_id": "0a38dcd6-51c0-4b17-ba7a-1f1972ff97d7",
+      "scenario": "s1",
+      "policy_mode": "enforce",
+      "seed": 204,
+      "duration_seconds": 78.554,
+      "receipts": 38,
+      "source_events": 39,
+      "source_unique_ids": 39,
+      "archived_source_events": 39,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {
+        "110101": 1
+      },
+      "receiver_objects": [],
+      "saved_metrics": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Expected detection families missing, or actionable baseline incidents observed",
+          "Policy enforcement run requires separate mitigation review; not an observe-mode detection trial"
+        ],
+        "attack_detection_passed": false,
+        "collection_coverage": 1.0,
+        "source_events": 39,
+        "archived_source_events": 39,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "observed_rules": [
+          "110101"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "0a38dcd6-51c0-4b17-ba7a-1f1972ff97d7",
+        "captured_packets": 470,
+        "alert_latency_summary_s": {
+          "count": 1,
+          "min": 1.519,
+          "max": 1.519
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Expected detection families missing, or actionable baseline incidents observed",
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture",
+          "Policy enforcement run requires separate mitigation review; not an observe-mode detection trial"
+        ],
+        "attack_detection_passed": false,
+        "collection_coverage": 1.0,
+        "source_events": 39,
+        "archived_source_events": 39,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110101",
+          "110102",
+          "110103"
+        ],
+        "observed_rules": [
+          "110101"
+        ],
+        "fim_correlated_files": null,
+        "transfers_verified": null,
+        "run_id": "0a38dcd6-51c0-4b17-ba7a-1f1972ff97d7",
+        "captured_packets": 470,
+        "alert_latency_summary_s": {
+          "count": 1,
+          "min": 1.519,
+          "max": 1.519
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "incomplete",
+          "missing_evidence": [],
+          "issues": [
+            "Expected detection families missing, or actionable baseline incidents observed",
+            "Policy enforcement run requires separate mitigation review; not an observe-mode detection trial"
+          ],
+          "attack_detection_passed": false,
+          "collection_coverage": 1.0,
+          "source_events": 39,
+          "archived_source_events": 39,
+          "archive_duplicates": 0,
+          "expected_rules": [
+            "110101",
+            "110102",
+            "110103"
+          ],
+          "observed_rules": [
+            "110101"
+          ],
+          "fim_correlated_files": null,
+          "transfers_verified": null,
+          "run_id": "0a38dcd6-51c0-4b17-ba7a-1f1972ff97d7",
+          "captured_packets": 470,
+          "alert_latency_summary_s": {
+            "count": 1,
+            "min": 1.519,
+            "max": 1.519
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 470,
+      "observations": {
+        "max_clock_offset_ms": 256.9,
+        "max_index_visibility_delay_s": 11.731,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T21:39:13.779995+00:00",
+        "previous_measured_run_id": "416054dc-5b21-424e-ba00-0b69dff1b09c",
+        "prior_run_final_manager_at": "2026-11-13T21:33:10.667000+00:00",
+        "quiet_interval_started_at": "2026-11-13T21:33:10.667000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 141.693696,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 253.154,
+      "latest_archive_delay_seconds": 1.759,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 2,
+        "401": 6,
+        "403": 30
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "incomplete",
+        "issues": [
+          "Expected detection families missing, or actionable baseline incidents observed",
+          "Policy enforcement run requires separate mitigation review; not an observe-mode detection trial"
+        ],
+        "captured_packets": 470,
+        "response_uri_diff_rows": 38,
+        "frames_tshark469_sha256": "907a2ea21ab2c89e770f0eba50c15e0f91e222b9706c576aa95302edbeb13e82",
+        "metrics_replay_sha256": "9a5b2c92668bdece0598d51c12cea26d58b7366a872952736f125e419d11fa93"
+      }
+    },
+    {
+      "name": "16-s3-enforce",
+      "run_id": "78b0ba96-ebe0-4208-ba46-3f3a0bccbb3f",
+      "scenario": "s3",
+      "policy_mode": "enforce",
+      "seed": 204,
+      "duration_seconds": 0.687,
+      "receipts": 3,
+      "source_events": 4,
+      "source_unique_ids": 4,
+      "archived_source_events": 4,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {},
+      "receiver_objects": [],
+      "saved_metrics": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Expected detection families missing, or actionable baseline incidents observed",
+          "Independent received export objects/receipts incomplete",
+          "Policy enforcement run requires separate mitigation review; not an observe-mode detection trial",
+          "Scenario HTTP packet evidence is incomplete"
+        ],
+        "attack_detection_passed": false,
+        "collection_coverage": 1.0,
+        "source_events": 4,
+        "archived_source_events": 4,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110302"
+        ],
+        "observed_rules": [],
+        "fim_correlated_files": null,
+        "transfers_verified": 0,
+        "run_id": "78b0ba96-ebe0-4208-ba46-3f3a0bccbb3f",
+        "captured_packets": 40,
+        "alert_latency_summary_s": {
+          "count": 0,
+          "min": null,
+          "max": null
+        }
+      },
+      "current_evaluator_real_tshark": {
+        "status": "incomplete",
+        "missing_evidence": [],
+        "issues": [
+          "Expected detection families missing, or actionable baseline incidents observed",
+          "Independent received export objects/receipts incomplete",
+          "Packet field export not independently verified: Packet CSV differs from a fresh export of this capture",
+          "Policy enforcement run requires separate mitigation review; not an observe-mode detection trial"
+        ],
+        "attack_detection_passed": false,
+        "collection_coverage": 1.0,
+        "source_events": 4,
+        "archived_source_events": 4,
+        "archive_duplicates": 0,
+        "expected_rules": [
+          "110302"
+        ],
+        "observed_rules": [],
+        "fim_correlated_files": null,
+        "transfers_verified": 0,
+        "run_id": "78b0ba96-ebe0-4208-ba46-3f3a0bccbb3f",
+        "captured_packets": 40,
+        "alert_latency_summary_s": {
+          "count": 0,
+          "min": null,
+          "max": null
+        }
+      },
+      "isolated_nonpacket_gate_recheck": {
+        "packet_verifier": "STUB reading supplied frames.csv; does not establish independent PCAP/CSV equivalence",
+        "result": {
+          "status": "incomplete",
+          "missing_evidence": [],
+          "issues": [
+            "Expected detection families missing, or actionable baseline incidents observed",
+            "Independent received export objects/receipts incomplete",
+            "Policy enforcement run requires separate mitigation review; not an observe-mode detection trial",
+            "Scenario HTTP packet evidence is incomplete"
+          ],
+          "attack_detection_passed": false,
+          "collection_coverage": 1.0,
+          "source_events": 4,
+          "archived_source_events": 4,
+          "archive_duplicates": 0,
+          "expected_rules": [
+            "110302"
+          ],
+          "observed_rules": [],
+          "fim_correlated_files": null,
+          "transfers_verified": 0,
+          "run_id": "78b0ba96-ebe0-4208-ba46-3f3a0bccbb3f",
+          "captured_packets": 40,
+          "alert_latency_summary_s": {
+            "count": 0,
+            "min": null,
+            "max": null
+          }
+        }
+      },
+      "saved_vs_isolated_metrics_equal": true,
+      "pcapng_structural_packets": 40,
+      "observations": {
+        "max_clock_offset_ms": 266.13,
+        "max_index_visibility_delay_s": 11.814,
+        "capture_dropped_packets": 0,
+        "collection_checked_at": "2026-11-13T21:40:29.931097+00:00",
+        "previous_measured_run_id": "0a38dcd6-51c0-4b17-ba7a-1f1972ff97d7",
+        "prior_run_final_manager_at": "2026-11-13T21:38:41.914000+00:00",
+        "quiet_interval_started_at": "2026-11-13T21:38:41.914000+00:00"
+      },
+      "clock_sample_bound_reconciles": true,
+      "clock_measured_after_run_seconds": 69.167264,
+      "clock_sample_math_within_rounding": true,
+      "quiet_interval_seconds": 76.448,
+      "latest_archive_delay_seconds": 1.874,
+      "phase_summary_visibility_matches": true,
+      "services_active_before_after": true,
+      "native_proof_copy": {
+        "schema": 3,
+        "rules_sha256": "8a71944c501ec8a0b15ccb7c910c96e762f71976ad0be1da49512397fb5eb4bb",
+        "loaded_revision": "db7629b4d71476b5d26f0d98cd2e6c80620dd1fec2f1cfc2becb83da19ada6f7",
+        "case_count": 26,
+        "case_names_complete": true,
+        "failed_transcripts": [],
+        "rules_revision_recomputed": true,
+        "independent_expiry_sessions": true
+      },
+      "quiet_prior_manager_matches_actual_previous_run": true,
+      "visibility_measurement_note": null,
+      "receipt_status_counts": {
+        "200": 2,
+        "403": 1
+      },
+      "enforce_export_request_blocked": true,
+      "successful_exports_in_source": 0,
+      "windows_tshark469_compat_replay": {
+        "status": "incomplete",
+        "issues": [
+          "Expected detection families missing, or actionable baseline incidents observed",
+          "Independent received export objects/receipts incomplete",
+          "Policy enforcement run requires separate mitigation review; not an observe-mode detection trial",
+          "Scenario HTTP packet evidence is incomplete"
+        ],
+        "captured_packets": 40,
+        "response_uri_diff_rows": 3,
+        "frames_tshark469_sha256": "9470d24078c1de22ec0912fbbddcc46f6909426e0b7e0bba6ebdd62c3d81d712",
+        "metrics_replay_sha256": "a869d23595459a79994c4b348e9ab63ddc2d69b85e3d820934ca79fa781e47ab"
+      }
+    },
+    {
+      "name": "17-s3-approved-5mb",
+      "run_id": "6c6f763b-811d-44d5-b3b3-9dd5e257bb26",
+      "scenario": "s3",
+      "policy_mode": "observe",
+      "seed": 205,
+      "duration_seconds": 0.641,
+      "receipts": 3,
+      "source_events": 5,
+      "source_unique_ids": 5,
+      "archived_source_events": 5,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {},
+      "receiver_objects": [
+        {
+          "bytes": 5000000,
+          "sha256": "bc392c58028cab64a0d59a18719ecae72216fc9cd5f3bcdb7c1362505583b5dd",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        }
+      ],
+      "saved_metrics": null,
+      "pcapng_structural_packets": 3687,
+      "receipt_status_counts": {
+        "200": 3
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "incomplete",
+        "issues": [
+          "Clock, index visibility and capture health observations missing",
+          "Expected detection families missing, or actionable baseline incidents observed",
+          "Native Wazuh rule validation is missing or failed",
+          "Workload intent is missing or unsupported"
+        ],
+        "captured_packets": 3687,
+        "response_uri_diff_rows": 4,
+        "frames_tshark469_sha256": "68770797efd24d36e766dcffdf11e231754ff1897957312f8caaf04486c939ac",
+        "metrics_replay_sha256": "e279945a63e1636ba9696efe28c913656033a8ceaa10ce50183bc07c4c225e58"
+      }
+    },
+    {
+      "name": "18-s3-unapproved-250kb",
+      "run_id": "3f2c44b6-b109-4518-a9b3-72b3d003766b",
+      "scenario": "s3",
+      "policy_mode": "observe",
+      "seed": 205,
+      "duration_seconds": 0.558,
+      "receipts": 3,
+      "source_events": 5,
+      "source_unique_ids": 5,
+      "archived_source_events": 5,
+      "archive_duplicates": 0,
+      "raw_custom_alerts_by_rule": {
+        "110301": 1
+      },
+      "receiver_objects": [
+        {
+          "bytes": 250000,
+          "sha256": "aa30a21c3957a5fb0a1bc2f118ecc22275a2a5fff9cdf20eaa0d5eb907e878f2",
+          "actual_file_present": true,
+          "actual_size_match": true,
+          "actual_sha256_match": true
+        }
+      ],
+      "saved_metrics": null,
+      "pcapng_structural_packets": 316,
+      "receipt_status_counts": {
+        "200": 3
+      },
+      "windows_tshark469_compat_replay": {
+        "status": "incomplete",
+        "issues": [
+          "Clock, index visibility and capture health observations missing",
+          "Expected detection families missing, or actionable baseline incidents observed",
+          "Independent received export objects/receipts incomplete",
+          "Native Wazuh rule validation is missing or failed",
+          "Workload intent is missing or unsupported"
+        ],
+        "captured_packets": 316,
+        "response_uri_diff_rows": 4,
+        "frames_tshark469_sha256": "f6a07fe359dbf81c9a4c50f2e3abc0da39b39322de57d25ee02fbbd22a47ed4e",
+        "metrics_replay_sha256": "d6513e1c223fecefe5eab614bc77de3dfd8c1bb5788327b0a67353dad9d257ad"
+      }
+    }
+  ],
+  "local_tshark_version": "TShark (Wireshark) 4.6.9 (v4.6.9-0-g2d548b197c75).",
+  "query_reconciliation": {
+    "Q1_calibration": {
+      "hits_total": {
+        "value": 1505,
+        "relation": "eq"
+      },
+      "aggregation_keys": [
+        "unique_events",
+        "by_action"
+      ],
+      "bounded_query": {
+        "query": "data.service:\"hospital-lab\" AND data.run_id:\"d35d222c-6286-4b21-877a-109a5a96dd2c\"",
+        "gte": "2026-11-13T20:02:04.686Z",
+        "lte": "2026-11-13T20:32:04.689Z"
+      }
+    },
+    "Q1_s1_1": {
+      "hits_total": {
+        "value": 39,
+        "relation": "eq"
+      },
+      "aggregation_keys": [
+        "unique_events",
+        "by_action"
+      ],
+      "bounded_query": {
+        "query": "data.service:\"hospital-lab\" AND data.run_id:\"e4570e23-7c0a-4490-9861-b9f29405b9c3\"",
+        "gte": "2026-11-13T21:10:24.110Z",
+        "lte": "2026-11-13T21:11:42.151Z"
+      }
+    },
+    "Q2_s1_1": {
+      "hits_total": {
+        "value": 7,
+        "relation": "eq"
+      },
+      "aggregation_keys": [],
+      "bounded_query": {
+        "query": "data.run_id:\"e4570e23-7c0a-4490-9861-b9f29405b9c3\" AND data.action:(\"login_failure\" OR \"login_success\")"
+      }
+    },
+    "Q3_s1_1": {
+      "hits_total": {
+        "value": 30,
+        "relation": "eq"
+      },
+      "aggregation_keys": [
+        "by_actor"
+      ],
+      "bounded_query": {
+        "query": "data.run_id:\"e4570e23-7c0a-4490-9861-b9f29405b9c3\" AND data.action:\"record_read\" AND data.care_scope:\"unassigned\""
+      }
+    },
+    "Q4_s2_1": {
+      "hits_total": {
+        "value": 50,
+        "relation": "eq"
+      },
+      "aggregation_keys": [],
+      "bounded_query": {
+        "query": "rule.groups:\"syscheck\" AND agent.name:\"hospital-win\"",
+        "gte": "2026-11-13T21:22:21.742Z",
+        "lte": "2026-11-13T21:23:44.623715+00:00"
+      }
+    },
+    "Q5_s3_all_runs": {
+      "hits_total": {
+        "value": 11,
+        "relation": "eq"
+      },
+      "aggregation_keys": [
+        "by_destination",
+        "by_approved",
+        "total_bytes"
+      ],
+      "bounded_query": {
+        "query": "data.service:\"hospital-lab\" AND data.action:\"export_completed\"",
+        "runs": {
+          "d35d222c-6286-4b21-877a-109a5a96dd2c": "02-calibration-30m",
+          "d62b2c3d-f8c5-4987-b33f-d57636e924ac": "09-s3-1",
+          "8316fd35-d5c7-458f-b563-84279eca1555": "10-s3-2",
+          "52f44b82-8fe1-4124-8c92-f8a23a083a8d": "11-s3-3",
+          "6c6f763b-811d-44d5-b3b3-9dd5e257bb26": "17-s3-approved-5mb",
+          "3f2c44b6-b109-4518-a9b3-72b3d003766b": "18-s3-unapproved-250kb"
+        },
+        "note": "All calibration, S3 attack repetitions, approved 5MB negative control, and unapproved 250KB size control exports reconciled against receiver.jsonl"
+      }
+    },
+    "Q5_s3_runs": {
+      "hits_total": {
+        "value": 2,
+        "relation": "eq"
+      },
+      "aggregation_keys": [
+        "total_bytes"
+      ],
+      "bounded_query": {
+        "query": "data.run_id:(\"d62b2c3d-f8c5-4987-b33f-d57636e924ac\" OR \"3f2c44b6-b109-4518-a9b3-72b3d003766b\") AND data.action:\"export_completed\""
+      }
+    },
+    "Q6_campaign_alerts": {
+      "hits_total": {
+        "value": 104,
+        "relation": "eq"
+      },
+      "aggregation_keys": [
+        "by_rule"
+      ],
+      "bounded_query": {
+        "query": "rule.id:(110101 OR 110102 OR 110103 OR 110201 OR 110301 OR 110302)",
+        "gte": "2026-11-13T19:44:00Z",
+        "lte": "2026-11-13T21:46:00Z"
+      }
+    },
+    "Q4_s2_1_reconciled": {
+      "rows": 50,
+      "all_digest_columns_match": true
+    },
+    "Q5_s3_all_runs_reconciled": {
+      "rows": 11,
+      "total_bytes": 21750000,
+      "actual_objects_verified": 11
+    }
+  },
+  "query_recorded_summary": {
+    "Q1_calibration_unique_events": 1505,
+    "Q1_s1_1_unique_events": 39,
+    "Q2_s1_1_auth_hits": 7,
+    "Q3_s1_1_unassigned_reads": 30,
+    "Q3_s1_1_distinct_patients": 30,
+    "Q4_s2_1_fim_alerts": 50,
+    "Q4_s2_1_digest_reconciled": 50,
+    "Q5_all_runs_exports": 11,
+    "Q5_all_runs_receiver_reconciled": "11/11",
+    "Q5_all_runs_total_bytes": 21750000.0,
+    "Q6_campaign_alert_hits": 104
+  },
+  "limitations": [
+    "[Original pre-compat / pre-live-revalidation Nov 13 snapshot] No current VM, engine executable, configuration snapshot or live dashboard was accessed. Preserved transcripts and raw objects were audited.",
+    "[Original pre-compat / pre-live-revalidation Nov 13 snapshot] Current local Windows tshark can differ from original Linux tshark. Exact CSV mismatch remains an incomplete replay, never changed to complete (later resolved with strict reverse-4-tuple equivalence in PRIVATE_EVIDENCE/replay-20261114-tshark469).",
+    "[Original pre-compat / pre-live-revalidation Nov 13 snapshot] Isolated nonpacket rechecks explicitly stub only the packet CSV verifier and cannot certify the capture/export binding.",
+    "[Original pre-compat / pre-live-revalidation Nov 13 snapshot] Clock files contain rounded RTT/offset samples and were collected after each run, not continuously; index visibility values are phase-summary observations, not independently timestamped per-event index polling receipts (superseded for soak and S2 in live_revalidation_20261114).",
+    "[Original pre-compat / pre-live-revalidation Nov 13 snapshot] Recovery summaries are preserved operator records; no outage was recreated. A second human rebuild remains untested (teammate clean-VM retesting later waived by project scope).",
+    "[Original pre-compat / pre-live-revalidation Nov 13 snapshot] 860 manifest entries match; 13 screenshots/summary files and manifest itself were unlisted and are independently hashed in this audit. This is not a signature or proof of initial collection provenance.",
+    "[Original pre-compat / pre-live-revalidation Nov 13 snapshot] Soak visibility 1.959s is a source/manager timing proxy after a tshark segfault, per phase-summary; do not treat it as actual polled index visibility (superseded by 01-soak-15m-revalidated).",
+    "[Original pre-compat / pre-live-revalidation Nov 13 snapshot] Q2/Q3 queries are scoped by run UUID without explicit time bounds (later re-exported with explicit UTC bounds in live_revalidation_20261114). Q5 all_runs is an explicit 6-run subset, not every campaign export.",
+    "[Original pre-compat / pre-live-revalidation Nov 13 snapshot] No separately timestamped per-run restoration receipts were found in measured-20261113. Current 50/50 runtime hashes and pre-run inventories corroborate restoration (later bracketed by 5 timestamped restore-receipts in live_revalidation_20261114)."
+  ],
+  "restoration": {
+    "current_runtime_document_files": 50,
+    "current_seed_hash_matches": 50,
+    "prior_s2_before_inventory_seed_matches": {
+      "12-s2-1": true,
+      "13-s2-2": true,
+      "14-s2-3": true
+    },
+    "limitation": "Current files and pre-run inventories independently corroborate seed restoration. No separately timestamped per-run restoration receipt is in the measured evidence directory."
+  },
+  "calibration_resources": {
+    "sample_count": 122,
+    "sample_span_seconds": 1827.645647,
+    "mem_available_mb_min": 5055.8203125,
+    "mem_available_mb_max": 5112.4921875,
+    "swap_used_kb_max": 0,
+    "load1_max": 0.26806640625,
+    "disk_free_gb_min": 31.0,
+    "hospital_health_ok_count": 122
+  },
+  "calibration_workflows": {
+    "orders": 15,
+    "results": 15,
+    "paired_results": 15,
+    "device_telemetry_events": 600
+  },
+  "independent_query_source_reconciliation": {
+    "Q1_calibration": {
+      "raw_source_count": 1505,
+      "query_total_matches_raw_source": true,
+      "query_hit_count": 0,
+      "query_hit_event_ids_match_raw_source": null,
+      "note": "Aggregate-only export; no per-event query hits preserved."
+    },
+    "Q1_s1_1": {
+      "raw_source_count": 39,
+      "query_total_matches_raw_source": true,
+      "query_hit_count": 0,
+      "query_hit_event_ids_match_raw_source": null,
+      "note": "Aggregate-only export; no per-event query hits preserved."
+    },
+    "Q2_s1_1": {
+      "raw_source_count": 7,
+      "query_total_matches_raw_source": true,
+      "query_hit_count": 7,
+      "query_hit_event_ids_match_raw_source": true,
+      "note": "Export hit event IDs independently joined to run-scoped raw source."
+    },
+    "Q3_s1_1": {
+      "raw_source_count": 30,
+      "query_total_matches_raw_source": true,
+      "query_hit_count": 30,
+      "query_hit_event_ids_match_raw_source": true,
+      "note": "Export hit event IDs independently joined to run-scoped raw source."
+    },
+    "Q3_distinct_patients": 30,
+    "Q6": {
+      "raw_actionable_alert_count": 104,
+      "query_hits_total": 104,
+      "raw_alert_rule_counts": {
+        "110101": 4,
+        "110102": 87,
+        "110103": 3,
+        "110302": 3,
+        "110201": 6,
+        "110301": 1
+      }
+    }
+  },
+  "dashboard": {
+    "exported_panel_count": 8,
+    "panel_refs_unique": true,
+    "all_panel_versions": "7.10.0",
+    "refresh_interval": {
+      "pause": false,
+      "value": 10000
+    },
+    "time_from": "now-4h",
+    "time_restore": true,
+    "health_vega_autosize": true,
+    "visually_reviewed": [
+      "dashboard-fresh.png",
+      "panel-35-fresh.png",
+      "panel-36-fresh.png",
+      "vega-unknown-empty.png",
+      "vega-unknown-badclock.png"
+    ],
+    "visual_result": "Full dashboard has8 rendered panels, green FRESH banner. Empty query and future clock screenshots render UNKNOWN. Final panel crops have no warning.",
+    "stale_prepatch_images": [
+      "crop-dashboard-fresh.png",
+      "crop-dashboard-stale.png"
+    ],
+    "summary_selector_entries": 40,
+    "summary_selector_note": "40 nested selector matches repeat8 actual panels; not40 panels.",
+    "refresh_transition_limit": "Before/after snapshots and refresh configuration support the operator account; no independently timed continuous screen recording was preserved."
+  },
+  "control_review": {
+    "s1_enforce_login_401": 6,
+    "s1_enforce_read_403": 30,
+    "s3_enforce_receivers_recorded_unchanged": true,
+    "approved_large_rule_ids": {},
+    "unapproved_small_rule_ids": {
+      "110301": 1
+    }
+  },
+  "recovery_operator_records": {
+    "filebeat": {
+      "stage": "filebeat_interruption",
+      "event_id": "4eaf308d-e580-46e2-a496-df3af66ea5a0",
+      "in_archives_while_stopped": true,
+      "opensearch_hits_while_stopped": 0,
+      "opensearch_hits_after_restart": 1,
+      "recovery_wait_s": 7,
+      "filebeat_status": "active"
+    },
+    "manager": {
+      "stage": "manager_interruption_agent_buffer_recovery",
+      "event_id": "cd5cb788-8ea3-4799-a437-424c2d04356f",
+      "in_archives_before_manager_start": false,
+      "in_archives_after_recovery": true,
+      "in_opensearch_after_recovery": 1,
+      "manager_status": "active"
+    },
+    "limit": "Operator summary evidence only; interruption not recreated and raw per-stage archives/index response receipts not present here."
+  },
+  "verdict": {
+    "preserved_observe_metrics_complete": 14,
+    "current_real_windows_tshark_complete": 14,
+    "isolated_nonpacket_gates_complete": 14,
+    "enforce_runs_stay_incomplete": 2,
+    "scoped_controls_general_observe_incomplete": 2,
+    "blanket_tasks_1_to_8_closure_supported": false,
+    "reason": "Native detection, content joins, Windows tshark 4.6.9 compatibility replay (14/14 observe complete in replay-20261114-tshark469; 15..16 enforce review and 17..18 scoped controls complete their scoped checks with 0 packet errors), and Nov 14 live revalidation (replacement soak, UTC-bounded Q2/Q3, 3x S2 repetitions, 5x restore receipts in live-revalidation-20261114) are verified while preserving historical records; un-rerun Nov 13 intervals retain post-run clock bounds, and Windows WazuhSvc/15m disconnect testing remains unexecuted non-admin scope (not a submission gate). Separate teammate clean-VM retesting is waived per project scope decision.",
+    "pre_compat_windows_tshark_complete": 0,
+    "windows_tshark469_compat_replay_complete": 14
+  },
+  "packet_replay_resolution": {
+    "evidence_alias": "PRIVATE_EVIDENCE/replay-20261114-tshark469",
+    "replay_summary_sha256": "20a21133f5b673ccce0f2572e60dd7180d1b2bd5a7367b6531cf65c03e39e7a5",
+    "tshark_version": "TShark (Wireshark) 4.6.9 (v4.6.9-0-g2d548b197c75).",
+    "root_cause": "Windows tshark 4.6.9 populates http.request.uri on HTTP response rows (http.response.code != empty, http.request.method == empty) from the reverse 4-tuple request, while Ubuntu tshark 4.2.2 left that column empty. Zero unexpected column/row differences occur across all 18 captures (52,451 CSV data rows total).",
+    "observe_runs_complete": 14,
+    "runs_evaluated": 18,
+    "total_csv_data_rows": 52451,
+    "total_response_uri_diff_rows": 2562,
+    "packet_verification_errors": 0,
+    "replay_incomplete_enforce_and_controls": {
+      "15-s1-enforce": "Expected enforce-mode mitigation review (110101 only; blocked reads).",
+      "16-s3-enforce": "Expected enforce-mode mitigation review (POST /api/exports 403; no completed export/receiver receipts or alerts).",
+      "17-s3-approved-5mb": "Passes scoped control-summary.json checks (3,687 packets, 0 drops); incomplete under general observe evaluator solely for missing observations.json, native-rule-tests.json, expected attack families, and workload intent.",
+      "18-s3-unapproved-250kb": "Passes scoped control-summary.json checks (316 packets, 0 drops); incomplete under general observe evaluator solely for missing observations.json, native-rule-tests.json, workload intent, and general 5 MB / 110302 transfer expectations."
+    }
+  },
+  "live_revalidation_20261114": {
+    "evidence_alias": "PRIVATE_EVIDENCE/live-revalidation-20261114",
+    "sha256sums_file_count": 318,
+    "sha256sums_sha256": "8b41d5e67e7fed85a3566fbfb83e1c79b62fe81caa568552b4e6c17c9a4a6d0c",
+    "copy_provenance": {
+      "status": "resolved_serialization_only",
+      "verified_at_utc": "2026-11-14T11:28:13.492244+00:00",
+      "canonical_submission_copy": "Windows PRIVATE_EVIDENCE/live-revalidation-20261114",
+      "retained_comparison_copy": "Ubuntu evidence/live-revalidation-20261114",
+      "shared_manifest_sha256": "8b41d5e67e7fed85a3566fbfb83e1c79b62fe81caa568552b4e6c17c9a4a6d0c",
+      "manifest_entries": 318,
+      "windows_raw_hash_matches": 318,
+      "ubuntu_raw_hash_matches": 311,
+      "byte_different_files": 7,
+      "json_value_differences": 0,
+      "comparison_method": "Read both copies without modification; compare raw SHA-256 and parsed JSON, then compare bytes after replacing CRLF with LF and removing at most one terminal LF in memory. No source file or manifest is normalized or replaced.",
+      "cause": "Windows uses CRLF and Ubuntu uses LF in seven JSON files. Five metrics.json files also have a terminal newline on Windows and no terminal newline on Ubuntu. The two visibility-poll files have no differences beyond line endings.",
+      "acceptance_impact": "No JSON values, event IDs, timestamps, poll measurements, detection results or evaluator verdicts differ. Existing historical timing qualifications remain applicable. Ubuntu still has seven raw manifest mismatches; content equivalence is not a claim that all Ubuntu raw hashes pass.",
+      "files": [
+        {
+          "path": "01-soak-15m-replacement/metrics.json",
+          "manifest_and_windows_sha256": "185715321c0f54632e51e967578dcade877711ba5da158b6d19b1205937e88dc",
+          "ubuntu_sha256": "0eb29ffc9b57953b0230e4313889de20781734e7e46e86ed39e5ff40423050f8",
+          "windows_bytes": 509,
+          "ubuntu_bytes": 489,
+          "difference": "CRLF versus LF plus one terminal newline on Windows",
+          "json_values_equal": true,
+          "bytes_equal_after_in_memory_line_ending_and_optional_terminal_newline_comparison": true
+        },
+        {
+          "path": "01-soak-15m-revalidated/metrics.json",
+          "manifest_and_windows_sha256": "0533fea23829a679c7aa3569a849463e9aa6b2f33a13c6e6156eac5c24c4a36b",
+          "ubuntu_sha256": "7586ea235fd9064c3c6b59e6df842520746f87f62499e0b42d0c6892b0b77d59",
+          "windows_bytes": 452,
+          "ubuntu_bytes": 434,
+          "difference": "CRLF versus LF plus one terminal newline on Windows",
+          "json_values_equal": true,
+          "bytes_equal_after_in_memory_line_ending_and_optional_terminal_newline_comparison": true
+        },
+        {
+          "path": "12-s2-revalidated-1/metrics.json",
+          "manifest_and_windows_sha256": "d20872ed8fa99eb83508d9bcb25486d36898e6c1614527b4d7690d6d7de72949",
+          "ubuntu_sha256": "7a96a066efedcb255490ad8827960fd29bec9511a8f0064fc84cb4206a3c93dd",
+          "windows_bytes": 512,
+          "ubuntu_bytes": 487,
+          "difference": "CRLF versus LF plus one terminal newline on Windows",
+          "json_values_equal": true,
+          "bytes_equal_after_in_memory_line_ending_and_optional_terminal_newline_comparison": true
+        },
+        {
+          "path": "13-s2-revalidated-2/metrics.json",
+          "manifest_and_windows_sha256": "7b623f3209346dd076da5593f883e5448b8bdbda771fc25776b115466d2153b0",
+          "ubuntu_sha256": "a8d2c49ab3e12f43b2c23abe2c2c228567f01ff822fee681649ca8ccc4f72034",
+          "windows_bytes": 512,
+          "ubuntu_bytes": 487,
+          "difference": "CRLF versus LF plus one terminal newline on Windows",
+          "json_values_equal": true,
+          "bytes_equal_after_in_memory_line_ending_and_optional_terminal_newline_comparison": true
+        },
+        {
+          "path": "14-s2-revalidated-3/metrics.json",
+          "manifest_and_windows_sha256": "fc96a8273073d31b90078bdee5b085749bea696fa89fee4730abe7fb575f02b9",
+          "ubuntu_sha256": "8c9f9eab31a1b2f6bc5ebe9bca8d91195ac478e0850a2dfbe006112f8af13b74",
+          "windows_bytes": 512,
+          "ubuntu_bytes": 487,
+          "difference": "CRLF versus LF plus one terminal newline on Windows",
+          "json_values_equal": true,
+          "bytes_equal_after_in_memory_line_ending_and_optional_terminal_newline_comparison": true
+        },
+        {
+          "path": "14-s2-revalidated-3/visibility-polls-m1.json",
+          "manifest_and_windows_sha256": "e55537936abf9beba38947a0906a1035746853e527ad6df57c3cfd576d190a8b",
+          "ubuntu_sha256": "9cf3853c7ced017694e202098bbae054b615e0a2e5a217b459887191f4f23b91",
+          "windows_bytes": 1038,
+          "ubuntu_bytes": 997,
+          "difference": "CRLF versus LF only",
+          "json_values_equal": true,
+          "bytes_equal_after_in_memory_line_ending_and_optional_terminal_newline_comparison": true
+        },
+        {
+          "path": "14-s2-revalidated-3/visibility-polls-m2.json",
+          "manifest_and_windows_sha256": "8433bb86279b3d4bf34a7fb68b5f4438e88511e876f804fff7c17c0b24c2a5a2",
+          "ubuntu_sha256": "296fc17c322544c9e95f521eca7721476da56711e7b24562a357e9035b752b18",
+          "windows_bytes": 1478,
+          "ubuntu_bytes": 1419,
+          "difference": "CRLF versus LF only",
+          "json_values_equal": true,
+          "bytes_equal_after_in_memory_line_ending_and_optional_terminal_newline_comparison": true
+        }
+      ]
+    },
+    "timing_and_polling_qualification": "per-event-index-visibility.jsonl records post-query timestamps from Ubuntu run_reval.py (~1 s archive loop), whereas visibility-polls*.json (m1..m3 soak, m1..m2 S2) were collected via visibility_probe.py using the pre-fix poll_first_index_visibility helper (poll-request-start timestamps with unmeasured OpenSearch query duration). Values are discrete polling bounds rather than internal OpenSearch commit instants, and periodic clock samples do not prove continuous synchronization. Prospective fixes in src/hospital_soc/timing.py and scripts/measure-run-timing.py do not retroactively alter preserved Nov 14 JSONs.",
+    "task4_interruption_vs_admin_scope": "Task 4 collection interruption and >90 s stale health criteria were exercised via guest filebeat and 45 s wazuh-manager stops (interruption-recovery.json). Stopping Windows WazuhSvc and exercising the 15-minute agents_disconnection_time transition require an Administrator shell and remain disclosed unexecuted scope.",
+    "rollover_failure_preserved": {
+      "dir": "01-soak-15m-replacement",
+      "run_id": "c7e19902-a86c-4b0c-806b-d4c8637c3682",
+      "status_windows_and_ubuntu": "incomplete",
+      "issue": "Index visibility delay unknown or excessive",
+      "root_cause": "2026-11-14 UTC daily rollover mapped data.service as an object from syscollector, causing Filebeat HTTP 400 mapper_parsing_exception; remediated via keyword template pinning and lossless migration of 10091/10091 docs."
+    },
+    "revalidated_runs": {
+      "01-soak-15m-revalidated": {
+        "run_id": "de22c9fc-82a9-40b0-82c8-35f685c7017f",
+        "status_windows_and_ubuntu": "complete",
+        "source_and_archived_events": 760,
+        "indexed_events": 760,
+        "captured_packets": 6574,
+        "capture_dropped_packets": 0,
+        "collection_window_clock_samples": 17,
+        "during_run_clock_samples": 14,
+        "max_clock_offset_ms": 61.42,
+        "proc_resource_samples": 17,
+        "max_source_to_index_delay_s": 11.943,
+        "live_event_id_poll_delays_s": [5.616, 7.985, 5.389]
+      },
+      "12-s2-revalidated-1": {
+        "run_id": "4db0b64a-ba2a-4fb9-9834-2886d9390f8b",
+        "status_windows_and_ubuntu": "complete",
+        "source_and_archived_events": 105,
+        "indexed_events": 105,
+        "fim_correlated_files": 50,
+        "observed_rules": ["110201"],
+        "captured_packets": 897,
+        "collection_window_clock_samples": 9,
+        "during_run_clock_samples": 3,
+        "max_clock_offset_ms": 57.27,
+        "max_source_to_index_delay_s": 8.769,
+        "live_event_id_poll_delays_s": [8.4, 3.136]
+      },
+      "13-s2-revalidated-2": {
+        "run_id": "226eb296-1c7f-43b7-9651-4a9fc19c8720",
+        "status_windows_and_ubuntu": "complete",
+        "source_and_archived_events": 105,
+        "indexed_events": 105,
+        "fim_correlated_files": 50,
+        "observed_rules": ["110201"],
+        "captured_packets": 939,
+        "collection_window_clock_samples": 13,
+        "during_run_clock_samples": 3,
+        "max_clock_offset_ms": 21.57,
+        "max_source_to_index_delay_s": 7.707,
+        "live_event_id_poll_delays_s": [1.56, 2.956]
+      },
+      "14-s2-revalidated-3": {
+        "run_id": "83168e5e-d388-4d56-8852-61174c4907f1",
+        "status_windows_and_ubuntu": "complete",
+        "source_and_archived_events": 105,
+        "indexed_events": 105,
+        "fim_correlated_files": 50,
+        "observed_rules": ["110201"],
+        "captured_packets": 933,
+        "collection_window_clock_samples": 13,
+        "during_run_clock_samples": 3,
+        "max_clock_offset_ms": 19.42,
+        "max_source_to_index_delay_s": 8.912,
+        "live_event_id_poll_delays_s": [2.7, 4.009]
+      }
+    },
+    "utc_bounded_queries": {
+      "run_id": "e4570e23-7c0a-4490-9861-b9f29405b9c3",
+      "gte": "2026-11-13T21:10:24.110Z",
+      "lte": "2026-11-13T21:13:42.151Z",
+      "q2_hits": 7,
+      "q3_hits": 30,
+      "q3_distinct_patients": 30,
+      "mismatches": 0
+    },
+    "restore_receipts": [
+      "reset-pre-serve-20261114.json",
+      "pre-s2-1-reset.json",
+      "post-s2-1-reset.json",
+      "post-s2-2-reset.json",
+      "post-s2-3-reset.json"
+    ]
+  },
+  "report_artifacts": {
+    "docx_path": "report/Healthcare_SOC_Report.docx",
+    "previous_pre_audit_docx_sha256": "49380f3f97b03ad6c6013846c32658b53bd8fa744fc343ad96f41dcdb8c9cdaa",
+    "audited_docx_sha256": "30550908e228bd30a6c61bfa0d51ecf82a0ba63fd4d1556bf4458a4da228328a",
+    "rendered_pages": 10,
+    "visual_qa_dirs": [
+      "HealthcareSOCLab/report-qa-20261114-checked",
+      "HealthcareSOCLab/report-qa-20261114-audited"
+    ]
+  }
+}

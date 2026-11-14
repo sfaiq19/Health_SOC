@@ -1,4 +1,4 @@
-"""Generate candidate OpenSearch saved objects; native import must be verified in Wazuh."""
+"""Generate saved objects with the compatibility fixes verified on Wazuh 4.14.10."""
 import json
 from pathlib import Path
 
@@ -21,7 +21,7 @@ def objects():
 
     def panel(identity, title, pattern, query, fields=(), metric=None, search=False):
         references = [{'name': 'kibanaSavedObjectMeta.searchSourceJSON.index', 'type': 'index-pattern', 'id': f'healthcare-{pattern}'}]
-        attrs = {'title': title, 'description': 'Candidate definition; validate mappings and import on the installed Wazuh version.',
+        attrs = {'title': title, 'description': 'Validate numeric mappings and native import on each rebuilt Wazuh installation.',
                  'kibanaSavedObjectMeta': {'searchSourceJSON': json.dumps(search_source(pattern, query))}}
         if search:
             attrs.update(columns=list(fields), sort=[['timestamp', 'desc']], version=1)
@@ -54,7 +54,7 @@ def objects():
     panel('incidents', 'Latest actionable events raw counts are not incident counts', 'alerts', alert_query,
           ['timestamp', 'rule.id', 'rule.level', 'data.actor_id', 'data.action', 'data.run_id'], search=True)
     state = "length(data('latest')) == 0 || !isValid(data('latest')[0]._source.data.event_time) ? 'UNKNOWN' : (!isValid(toDate(data('latest')[0]._source.data.event_time)) || tick - toDate(data('latest')[0]._source.data.event_time) < -1000 ? 'UNKNOWN' : (tick - toDate(data('latest')[0]._source.data.event_time) > 90000 ? 'STALE' : 'FRESH'))"
-    spec = {'$schema': 'https://vega.github.io/schema/vega/v5.json', 'width': 420, 'height': 110,
+    spec = {'$schema': 'https://vega.github.io/schema/vega/v5.json', 'width': 420, 'height': 110, 'autosize': 'none',
             'signals': [{'name': 'tick', 'init': 'now()', 'on': [{'events': {'type': 'timer', 'throttle': 1000}, 'update': 'now()'}]},
                         {'name': 'state', 'update': state}],
             'data': [{'name': 'latest', 'url': {'index': 'wazuh-archives-*', 'body': {
@@ -74,13 +74,14 @@ def objects():
     for index, obj in enumerate(result[2:]):
         name = f'panel_{index}'
         refs.append({'name': name, 'type': obj['type'], 'id': obj['id']})
-        panels.append({'panelIndex': str(index), 'panelRefName': name,
+        panels.append({'panelIndex': str(index), 'panelRefName': name, 'version': '7.10.0',
                        'gridData': {'x': (index % 2) * 24, 'y': (index // 2) * 15, 'w': 24, 'h': 15, 'i': str(index)},
                        'embeddableConfig': {}})
     result.append({'type': 'dashboard', 'id': 'healthcare-overview', 'references': refs,
-                   'attributes': {'title': 'Healthcare SOC lab', 'description': 'Native import and field validation pending. Missing telemetry is unknown.',
+                   'attributes': {'title': 'Healthcare SOC lab', 'description': 'Wazuh 4.14.10 compatibility verified in the November 13 lab. Recheck import and numeric mappings on rebuild. Missing/invalid-clock telemetry is UNKNOWN; >90s is STALE.',
                                   'panelsJSON': json.dumps(panels), 'optionsJSON': '{"useMargins":true,"hidePanelTitles":false}',
-                                  'version': 1, 'timeRestore': False,
+                                  'version': 1, 'timeRestore': True, 'timeFrom': 'now-4h', 'timeTo': 'now',
+                                  'refreshInterval': {'pause': False, 'value': 10000},
                                   'kibanaSavedObjectMeta': {'searchSourceJSON': '{"query":{"query":"","language":"lucene"},"filter":[]}'}}})
     return result
 
@@ -88,4 +89,4 @@ def objects():
 if __name__ == '__main__':
     output = Path(__file__).resolve().parents[1] / 'siem/dashboard.ndjson'
     output.write_text(''.join(json.dumps(item) + '\n' for item in objects()), encoding='utf-8')
-    print(f'Wrote {output}; fresh Wazuh import remains required.')
+    print(f'Wrote {output}; validate native import on each rebuilt Wazuh installation.')

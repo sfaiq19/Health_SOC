@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from hashlib import sha256
 import json
 import os
@@ -57,7 +58,7 @@ def restore_documents(config: LabConfig, seed_manifest: dict) -> dict:
     recorded = json.loads((root / 'seed-manifest.json').read_text())
     if recorded != seed_manifest:
         raise ValueError('Restore manifest differs from the runtime seed manifest')
-    paths = {identity: document_path(config, identity) for identity in recorded['documents']}
+    paths = {identity: document_path(config, identity) for identity in sorted(recorded['documents'])}
     expected = {f'D{i:03}' for i in range(1, 51)}
     if set(paths) != expected:
         raise ValueError('Incomplete document manifest')
@@ -66,8 +67,15 @@ def restore_documents(config: LabConfig, seed_manifest: dict) -> dict:
         raise ValueError('Seed content does not match manifest')
     for identity in paths:
         update_document(config, identity, contents[identity])
-    verified = all(sha256(path.read_bytes()).hexdigest() == recorded['documents'][identity] for identity, path in paths.items())
-    return {'restored': len(paths), 'verified': verified}
+    hashes = {identity: sha256(path.read_bytes()).hexdigest() for identity, path in paths.items()}
+    verified = all(hashes[identity] == recorded['documents'][identity] for identity in paths)
+    return {
+        'restored': len(paths),
+        'verified': verified,
+        'seed': recorded['seed'],
+        'restored_at': datetime.now(timezone.utc).isoformat(),
+        'hashes': hashes,
+    }
 
 
 @bp.put('/api/documents/<document_id>')

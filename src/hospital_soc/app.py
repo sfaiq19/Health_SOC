@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import sqlite3
 import time
 from uuid import UUID, uuid4
@@ -79,7 +80,12 @@ def create_app(config: LabConfig) -> Flask:
         with database(config) as db:
             db.execute('SELECT count(*) FROM patients').fetchone()
         g.action = 'service_heartbeat'
-        return jsonify(status='ok', service='hospital-lab', policy_mode=config.policy_mode)
+        return jsonify(
+            status='ok',
+            service='hospital-lab',
+            policy_mode=config.policy_mode,
+            server_time=datetime.now(timezone.utc).isoformat(),
+        )
 
     app.register_blueprint(auth)
     app.register_blueprint(clinical)

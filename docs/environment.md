@@ -1,5 +1,7 @@
 # Healthcare SOC environment
 
+On 13 November the operator verified the installed Ubuntu guest on VMnet4 (ens192), Wazuh 4.14.10 and active Windows endpoint 001. The diagnostic archive corroborates cross-host requests, Wazuh alerts and native FIM. Recheck services and isolation at startup. See the [current ledger](implementation-progress.md); the preflight below is historical.
+
 Status on 10 November 2026: Preflight re-executed, Ubuntu 24.04.5 ISO fully downloaded and verified against official SHA-256 sums, Windows hospital runtime seeded (seed 101), rendered agent XML snippets staged, and private guest handoff archive prepared. The live guest VM is not booted or accepted; host resource blockers and privilege gates remain explicitly recorded.
 
 ## 10 November 2026 preflight readings

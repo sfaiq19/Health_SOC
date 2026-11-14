@@ -1,5 +1,9 @@
 # Astra finding remediation — 25 October 2026
 
+For the November 13 native results and current blockers, use the [current acceptance ledger](implementation-progress.md).
+
+14 November continuation repaired the remaining rule/source eligibility, order-response chronology and malformed-document CLI defects with regressions. It integrated the archived native action selectors, Windows FIM case matching and schema-3 acknowledged-expiry proof checks. The [fresh verification record](local-validation.md) reports 169 tests plus 6 subtests. The revised native driver still requires a real 4.14.10 run.
+
 Review baseline: `922e58edc8daf20e4a9da028357cf44f04b0a006`.
 Branch: `codex/astra-review-fixes`. The existing checkout was clean on main; fixes use a dedicated branch in this checkout. No VM, external service, or native acceptance state is changed by this repair.
 

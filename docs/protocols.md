@@ -6,4 +6,4 @@ Virtual Ethernet and IPv4 connect the Windows host and Ubuntu guest. ARP resolve
 
 Wireshark can show connection timing, HTTP operations and export traffic. File modification is established by actual before/after hashes and native FIM, not by a PUT packet alone. Export integrity is established by sender/receiver size and digest; wire byte counts include headers and retransmissions. TLS payload visibility would require session secrets; without them only metadata is claimed.
 
-FHIR/HL7, DICOM and medical-device-specific protocols are possible future adapters, not implemented features. The current one-subnet lab does not demonstrate segmentation, clinical safety or regulatory compliance. Packet screenshots and query results remain pending until actual VM evaluation.
+FHIR/HL7, DICOM and medical-device-specific protocols are possible future adapters. The current one-subnet lab has no independent clinical-safety or regulatory validation. The preserved measured campaign contains actual packet captures and Q1–Q6 results; report/evidence-index.md identifies them and the audit records timing/query-scope limitations.

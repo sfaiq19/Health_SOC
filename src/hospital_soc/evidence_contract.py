@@ -247,7 +247,7 @@ def reconcile_operations(manifest, source, start, end):
                             or obs_result_idx <= obs_order_idx):
                         lab_issue = True
                     try:
-                        if (time_value(receipt['started_at']) < time_value(order_receipt['started_at'])
+                        if (time_value(receipt['started_at']) < time_value(order_receipt['ended_at'])
                                 or time_value(event['event_time']) < time_value(order_event['event_time'])):
                             lab_issue = True
                     except (ValueError, TypeError, KeyError):

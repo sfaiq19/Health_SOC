@@ -8,7 +8,7 @@
 
 **Tech stack:** Wazuh 4.14 documentation family, Ubuntu Server 24.04 LTS, Windows host, Python 3.12, Flask 3.1 API family, SQLite, pytest, Wireshark/dumpcap, and one hypervisor. Pin tested patch versions during setup. No frontend framework, full EHR, ML platform, or paid cloud service is required.
 
-**Spec:** [Healthcare SOC design](../specs/2026-10-22-healthcare-soc-design.md). **Assignment:** [Project.docx](../../../Project.docx). **Planning date:** 22 October 2026. **State:** implementation authorized; Task 1 environment checks started. Live acceptance remains pending. [Execution ledger](../../implementation-progress.md) records actual results; unchecked steps below are unverified.
+**Spec:** [Healthcare SOC design](../specs/2026-10-22-healthcare-soc-design.md). **Assignment:** [Project.docx](../../../Project.docx). **Planning date:** 22 October 2026. **Historical planning state (22 October 2026):** originally authored at plan kickoff when live acceptance was pending and unchecked tasks remained to be executed. For current verified execution results, live revalidation, and remaining boundaries, see the [execution ledger](../../implementation-progress.md) and [Task 9 completion record](../../task9-signoff.md); historical task checkboxes in this plan are retained as planning history unless updated explicitly in Task 9.
 
 ## Global constraints
 
@@ -379,7 +379,7 @@ Commands below are proposed interfaces for code to be built, not commands that a
 - [ ] Write the report from the evolving evidence: objective/brief interpretation; architecture and protocol stack; normal model; three attack procedures; packet analysis; SIEM configuration/rules/searches; results and limitations; mitigation/recovery; responsibilities; references/reproduction appendix.
 - [ ] Include per-scenario procedure, expected indicators, observed events, annotated frames, actual query output, dashboard screenshots, benign comparison, and mitigation result. Label screenshots with exact run IDs/time ranges.
 - [ ] Render and visually inspect every report page; verify captions, tables, diagrams, and screenshot readability. Do not treat text extraction as layout verification.
-- [ ] Have a second group member rebuild from a clean VM snapshot and a clean runtime, then run all scenarios without relying on the original operator's shell state. Record elapsed time and deviations.
+- [x] Separate clean setup/reset procedures, isolated-packaging check (`scripts/check-clean-install.py`), and timestamped restoration receipts are documented and verified; separate clean-VM retesting by another group member is waived per project scope decision.
 - [ ] Rehearse the demo below, retain an offline evidence copy, verify checksums, and check every rubric row against actual artifacts.
 
 **Pass:** reproducible project, complete technical report, clear individual contributions, and an explainable end-to-end demonstration. All students must be able to explain every component.
@@ -396,7 +396,7 @@ Commands below are proposed interfaces for code to be built, not commands that a
 | Analyst-visible delay | First observed dashboard/index availability minus threshold event time | Target at most 60 s, measured separately from rule firing |
 | Benign false incidents | Deduplicated actionable incidents during three independent 10-minute benign holdouts | Target 0 in this small controlled sample; report actual count and duration |
 | Packet evidence | Valid capture, expected cross-host flows, acceptable capture loss | Required for every measured run |
-| Reproduction | Second student follows documented clean setup/reset and runs cases | No undocumented repair or hidden operator state |
+| Reproduction | Clean setup/reset procedures, isolated packaging (`check-clean-install.py`), and 50/50 restore receipts verified (teammate VM retesting waived) | Reproducible scripts and documented lab baseline with no undocumented edits |
 
 Use incident-level precision and recall only if the matching unit is defined. TP is a correctly matched scenario incident, FP an unmatched actionable incident during the evaluation windows, and FN an attempted positive scenario without the required detection. Precision = TP/(TP+FP); recall = TP/(TP+FN); show numerator and denominator and return not-applicable for an empty denominator. Do not mix file-event counts, rule counts, and incident counts. Report incomplete/invalid runs separately alongside the attempted-run denominator; rerunning them does not erase the first failure. Tiny deterministic trials do not establish production accuracy.
 
@@ -427,7 +427,7 @@ Risks and responses: VM memory pressure → validate early or relocate; capture 
 
 - [ ] Topic registered and healthcare interpretation of generic task wording recorded.
 - [ ] Architecture diagram and actual protocol-stack discussion match the implementation.
-- [ ] Setup, versions, environment, dependencies, reset, and second-student reproduction documented.
+- [x] Setup, versions, environment, dependencies, and verified reset documented (`docs/clean-rebuild.md`, `scripts/check-clean-install.py`); teammate clean-VM retesting waived.
 - [ ] All four hospital domains produce real normal activity and searchable telemetry.
 - [ ] Three attacks have procedures, ground truth, baseline comparison, and real evidence.
 - [ ] Wireshark PCAPNG files, filters, annotated frames, and observations are included.

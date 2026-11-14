@@ -1,5 +1,7 @@
 # Healthcare SOC VM guide for my phone
 
+**13 November update.** Ubuntu and Wazuh 4.14.10 are installed on VMnet4 with guest ens192=10.77.0.10. The three diagnostic scenarios ran successfully. Resume with the [current revalidation procedure](2026-11-13-native-revalidation.md) and [acceptance ledger](implementation-progress.md). The installation walkthrough below is historical rebuild guidance.
+
 ## Paste this into a new ChatGPT conversation and attach this guide
 
 “Be my hands-on tutor for the Healthcare SOC lab described in the attached guide. I am using ChatGPT on my phone and doing the work myself on a Windows laptop. You cannot see my laptop or repository. Start by asking which checkpoint I last completed; if this is my first session, start at 1. Give me **one action at a time**. Say exactly where to do it (Windows PowerShell, Administrator PowerShell, VMware GUI, or Ubuntu terminal), what to click or type, what success looks like, and which short output to send you. Wait for my result before continuing. If a screen differs, ask what options I see. If something fails, troubleshoot from the actual error. Before formatting a disk or changing network settings, help me identify the exact lab target. Never ask me to send passwords, tokens, private archives or raw packet captures. At the end of a session, give me a short resume note with the last verified checkpoint, any blocker, and the next action. My first goal is simply to boot Ubuntu and successfully SSH into it from Windows.”

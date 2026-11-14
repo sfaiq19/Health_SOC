@@ -12,7 +12,7 @@ from uuid import UUID
 
 from .packets import validate_pcapng, verified_packet_rows
 from .evidence_contract import canonical_uuid as _raw_canonical_uuid, validate_receipts, reconcile_operations
-from .native_validation import cases as native_cases
+from .native_validation import cases as native_cases, check_transcript, validate_expiry_transcript
 
 
 def canonical_uuid(value):
@@ -22,7 +22,34 @@ def canonical_uuid(value):
         return False
 
 EXPECTED = {'s1': {'110101', '110102', '110103'}, 's2': {'110201'}, 's3': {'110302'}, 'baseline': set()}
-ACTIONABLE = {'110101', '110102', '110103', '110201', '110301', '110302'}
+ACTIONABLE = {
+    '110101': {'action': 'login_failure', 'outcome': 'denied'},
+    '110102': {'action': 'record_read', 'outcome': 'success', 'care_scope': 'unassigned'},
+    '110103': {'action': 'record_read', 'outcome': 'success'},
+    '110201': {'action': 'document_update', 'outcome': 'success'},
+    '110301': {'action': 'export_completed', 'outcome': 'success', 'destination_approved': 'no'},
+    '110302': {'action': 'export_completed', 'outcome': 'success', 'destination_approved': 'no'},
+}
+
+
+def eligible_alert(rule_id, source, data):
+    """Check the trigger against the hospital rule family; Wazuh owns frequency state."""
+    if source.get('service') != 'hospital-lab' or data.get('service') != 'hospital-lab':
+        return False
+    if any(source.get(key) != value or data.get(key) != value for key, value in ACTIONABLE[rule_id].items()):
+        return False
+    if rule_id in {'110101', '110103', '110201'}:
+        actor_key = source.get('actor_key')
+        return isinstance(actor_key, str) and bool(actor_key) and data.get('actor_key') == actor_key
+    if rule_id in {'110301', '110302'}:
+        size, decoded = source.get('bytes_sent'), data.get('bytes_sent')
+        # Native Wazuh serializes numeric JSON fields as decimal strings.
+        if type(size) is not int or size <= 0:
+            return False
+        if not ((type(decoded) is int and decoded == size) or decoded == str(size)):
+            return False
+        return (size >= 1_000_000) == (rule_id == '110302')
+    return True
 
 
 def instant(value):
@@ -90,7 +117,7 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
                         if key in item.get('syscheck', {}) and not isinstance(item['syscheck'][key], str):
                             raise ValueError(f'syscheck.{key} must be a string')
                     for data in [item, item.get('data', {})]:
-                        for key in ['run_id', 'event_id', 'request_id', 'event_time']:
+                        for key in ['run_id', 'event_id', 'request_id', 'event_time', 'document_id']:
                             if key in data and not isinstance(data[key], str):
                                 raise ValueError(f'{key} must be a string')
                         if name != 'alerts.jsonl' and data.get('service') == 'hospital-lab':
@@ -112,7 +139,8 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
     for event in alerts:
         data = event.get('data') if isinstance(event.get('data'), dict) else {}
         rule = event.get('rule') if isinstance(event.get('rule'), dict) else {}
-        if data.get('run_id') == run_id and str(rule.get('id')) in ACTIONABLE:
+        rule_id = str(rule.get('id'))
+        if data.get('run_id') == run_id and rule_id in ACTIONABLE:
             original = source_by_id.get(data.get('event_id'))
             valid = (
                 isinstance(event.get('agent'), dict)
@@ -120,6 +148,7 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
                 and canonical_uuid(data.get('event_id'))
                 and canonical_uuid(data.get('request_id'))
                 and original is not None
+                and eligible_alert(rule_id, original, data)
                 and all(data.get(key) == original.get(key) for key in ['run_id', 'event_id', 'request_id', 'action', 'outcome', 'actor_id', 'event_time'])
             )
             if not valid:
@@ -127,7 +156,7 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
                 continue
             try:
                 latency = (instant(event['timestamp']) - instant(data['event_time'])).total_seconds()
-                observed.add(str(rule.get('id')))
+                observed.add(rule_id)
                 result['alert_latencies_s'].append(latency)
                 if not -1 <= latency <= 30:
                     issues.append('Alert latency outside target or clock uncertainty')
@@ -230,8 +259,26 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
             valid_cases = ({item['case'] for item in cases} == case_names and all(
                 item.get('passed') is True and item.get('expected_rules') == expectations[item['case']]
                 and item.get('observed_rules') == expectations[item['case']] for item in cases))
-        if proof.get('validation_schema') != 2 or not valid_cases:
+        if proof.get('validation_schema') != 3 or not valid_cases:
             issues.append('Native proof lacks complete per-event case results')
+        else:
+            expiry_sessions = [case.get('session_sha256') for case in cases if case['case'].endswith('-expiry')]
+            if (any(not isinstance(value, str) or not re.fullmatch('[0-9a-f]{64}', value) for value in expiry_sessions)
+                    or len(set(value for value in expiry_sessions if isinstance(value, str))) != 3):
+                issues.append('Native expiry cases lack independent sessions')
+            for case in cases:
+                name = case['case']  # already checked against the authoritative allowlist
+                try:
+                    raw = (artifacts_dir / f'{name}.txt').read_bytes()
+                    output = raw.decode('utf-8')
+                except (OSError, UnicodeError):
+                    issues.append(f'Native transcript missing or unreadable: {name}')
+                    continue
+                challenge = proof.get('loaded_revision') if name == 'loaded-revision' else None
+                if (sha256(raw).hexdigest() != case.get('transcript_sha256')
+                        or not check_transcript(output, expectations[name], challenge)['passed']
+                        or (name.endswith('-expiry') and not validate_expiry_transcript(name, output, case))):
+                    issues.append(f'Native transcript disagrees with the evidence contract: {name}')
         revision = proof.get('loaded_revision')
         rules_text = rule_path.read_text(encoding='utf-8').replace('\r\n', '\n')
         markers = re.findall(r'\[hc-rev:([0-9a-f]{64})\]', rules_text)
@@ -295,6 +342,7 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
                 issues.append('Canonical dummy document root is missing')
 
             fim_events_by_doc = {}
+            names_on_windows = {ntpath.normcase(f'{doc}.txt'): doc for doc in expected_docs}
             for event in alerts:
                 if not isinstance(event, dict):
                     continue
@@ -314,15 +362,11 @@ def evaluate_run(manifest, artifacts_dir: Path) -> dict:
                              and ntpath.normcase(ntpath.normpath(ntpath.dirname(path))) == ntpath.normcase(ntpath.normpath(document_root)))
                 if not same_root:
                     continue
-                filename = path.replace('\\', '/').rsplit('/', 1)[-1]
-                if filename.endswith('.txt'):
-                    fim_events_by_doc.setdefault(filename.removesuffix('.txt'), []).append(check)
-                else:
-                    fim_events_by_doc.setdefault(f'invalid:{filename}', []).append(check)
-
-            for name in fim_events_by_doc:
-                if name not in expected_docs:
+                doc = names_on_windows.get(ntpath.normcase(ntpath.basename(path)))
+                if doc is None:
                     issues.append('Contradictory or duplicate FIM observations detected')
+                    continue
+                fim_events_by_doc.setdefault(doc, []).append(check)
 
             manifest_receipts = manifest.get('receipts', []) if isinstance(manifest.get('receipts'), list) else []
             for r in manifest_receipts:
